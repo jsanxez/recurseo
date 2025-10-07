@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:recurseo/core/constants/app_colors.dart';
 import 'package:recurseo/core/constants/app_sizes.dart';
+import 'package:recurseo/core/utils/result.dart';
+import 'package:recurseo/features/chat/presentation/providers/chat_providers.dart';
 import 'package:recurseo/features/services/presentation/providers/catalog_providers.dart';
 
 /// Pantalla de detalle de un servicio
@@ -136,13 +138,25 @@ class ServiceDetailScreen extends ConsumerWidget {
 
                   // Botón de contactar
                   OutlinedButton.icon(
-                    onPressed: () {
-                      // TODO: Abrir chat
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Funcionalidad próximamente'),
-                        ),
-                      );
+                    onPressed: () async {
+                      // Crear o abrir conversación con el proveedor
+                      final repository = ref.read(chatRepositoryProvider);
+                      final result = await repository
+                          .getOrCreateConversation(service.providerId);
+
+                      if (!context.mounted) return;
+
+                      switch (result) {
+                        case Success(data: final conversation):
+                          context.push('/chat/${conversation.id}');
+                        case Failure(message: final message):
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(message),
+                              backgroundColor: AppColors.error,
+                            ),
+                          );
+                      }
                     },
                     icon: const Icon(Icons.chat),
                     label: const Text('Contactar Proveedor'),

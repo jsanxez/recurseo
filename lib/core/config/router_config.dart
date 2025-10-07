@@ -7,6 +7,8 @@ import 'package:recurseo/features/auth/presentation/screens/login_screen.dart';
 import 'package:recurseo/features/auth/presentation/screens/register_screen.dart';
 import 'package:recurseo/features/auth/presentation/screens/splash_screen.dart';
 import 'package:recurseo/features/auth/presentation/screens/welcome_screen.dart';
+import 'package:recurseo/features/chat/presentation/screens/chat_screen.dart';
+import 'package:recurseo/features/chat/presentation/screens/conversations_screen.dart';
 import 'package:recurseo/features/profile/presentation/screens/edit_profile_screen.dart';
 import 'package:recurseo/features/profile/presentation/screens/provider_public_profile_screen.dart';
 import 'package:recurseo/features/profile/presentation/screens/settings_screen.dart';
@@ -135,6 +137,21 @@ class AppRouterConfig {
         path: '/provider/requests',
         name: 'provider-requests',
         builder: (context, state) => const ProviderRequestsScreen(),
+      ),
+
+      // Chat
+      GoRoute(
+        path: '/conversations',
+        name: 'conversations',
+        builder: (context, state) => const ConversationsScreen(),
+      ),
+      GoRoute(
+        path: '/chat/:conversationId',
+        name: 'chat',
+        builder: (context, state) {
+          final conversationId = state.pathParameters['conversationId']!;
+          return ChatScreen(conversationId: conversationId);
+        },
       ),
     ],
 

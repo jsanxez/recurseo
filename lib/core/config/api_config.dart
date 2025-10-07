@@ -11,6 +11,8 @@ class ApiConfig {
   static const String services = '/services';
   static const String requests = '/requests';
   static const String categories = '/categories';
+  static const String conversations = '/conversations';
+  static const String messages = '/messages';
 
   // Timeouts
   static const Duration connectTimeout = Duration(seconds: 30);

@@ -5,6 +5,7 @@ import 'package:recurseo/core/constants/app_colors.dart';
 import 'package:recurseo/core/constants/app_sizes.dart';
 import 'package:recurseo/features/auth/domain/entities/user_entity.dart';
 import 'package:recurseo/features/auth/presentation/providers/auth_notifier.dart';
+import 'package:recurseo/features/chat/presentation/providers/chat_providers.dart';
 import 'package:recurseo/features/requests/presentation/providers/request_providers.dart';
 import 'package:recurseo/features/services/presentation/providers/catalog_providers.dart';
 
@@ -549,35 +550,157 @@ class _ProviderRequestsContent extends ConsumerWidget {
 }
 
 // Tab de Mensajes
-class _MessagesTab extends StatelessWidget {
+class _MessagesTab extends ConsumerWidget {
   const _MessagesTab();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final conversationsAsync = ref.watch(conversationsProvider);
+    final authState = ref.watch(authNotifierProvider);
+    final currentUserId =
+        authState is Authenticated ? authState.user.id : '';
+
     return CustomScrollView(
       slivers: [
         SliverAppBar(
           title: const Text('Mensajes'),
           floating: true,
+          actions: [
+            TextButton(
+              onPressed: () => context.push('/conversations'),
+              child: const Text('Ver todas'),
+            ),
+          ],
         ),
-        SliverFillRemaining(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.chat_bubble_outline,
-                  size: 64,
-                  color: AppColors.grey300,
-                ),
-                const SizedBox(height: AppSizes.paddingMd),
-                Text(
-                  'No tienes mensajes aún',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppColors.textSecondary,
+        conversationsAsync.when(
+          data: (conversations) {
+            if (conversations.isEmpty) {
+              return SliverFillRemaining(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.chat_bubble_outline,
+                        size: 64,
+                        color: Colors.grey[400],
                       ),
+                      const SizedBox(height: AppSizes.paddingMd),
+                      Text(
+                        'No tienes mensajes aún',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                      ),
+                    ],
+                  ),
                 ),
-              ],
+              );
+            }
+
+            final displayConversations = conversations.take(5).toList();
+            return SliverPadding(
+              padding: const EdgeInsets.symmetric(vertical: AppSizes.sm),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final conversation = displayConversations[index];
+                    final otherUserName =
+                        conversation.getOtherUserName(currentUserId);
+                    final hasUnread = conversation.hasUnreadMessages;
+
+                    return ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: AppColors.primaryLight,
+                        child: Text(
+                          otherUserName[0].toUpperCase(),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      title: Text(
+                        otherUserName,
+                        style: TextStyle(
+                          fontWeight:
+                              hasUnread ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                      subtitle: Text(
+                        conversation.lastMessagePreview,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: hasUnread ? Colors.black87 : Colors.grey[600],
+                          fontWeight:
+                              hasUnread ? FontWeight.w500 : FontWeight.normal,
+                        ),
+                      ),
+                      trailing: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            conversation.lastMessageTime,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(
+                                  color: hasUnread
+                                      ? AppColors.primary
+                                      : Colors.grey[500],
+                                ),
+                          ),
+                          if (hasUnread) ...[
+                            const SizedBox(height: 4),
+                            Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: AppColors.error,
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 18,
+                                minHeight: 18,
+                              ),
+                              child: Text(
+                                conversation.unreadCount.toString(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      onTap: () {
+                        context.push('/chat/${conversation.id}');
+                      },
+                    );
+                  },
+                  childCount: displayConversations.length,
+                ),
+              ),
+            );
+          },
+          loading: () => const SliverFillRemaining(
+            child: Center(child: CircularProgressIndicator()),
+          ),
+          error: (_, __) => SliverFillRemaining(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline,
+                      size: 48, color: AppColors.error),
+                  const SizedBox(height: AppSizes.md),
+                  const Text('Error al cargar mensajes'),
+                ],
+              ),
             ),
           ),
         ),
