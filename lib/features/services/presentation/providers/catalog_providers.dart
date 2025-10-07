@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:recurseo/core/config/app_config.dart';
 import 'package:recurseo/core/utils/result.dart';
 import 'package:recurseo/features/profile/domain/entities/service_entity.dart';
+import 'package:recurseo/features/services/data/datasources/catalog_mock_datasource.dart';
 import 'package:recurseo/features/services/data/datasources/catalog_remote_datasource.dart';
 import 'package:recurseo/features/services/data/repositories/catalog_repository_impl.dart';
 import 'package:recurseo/features/services/domain/entities/category_entity.dart';
@@ -14,10 +16,26 @@ final catalogRemoteDataSourceProvider =
   return CatalogRemoteDataSource(dio);
 });
 
+/// Provider del mock datasource
+final catalogMockDataSourceProvider = Provider<CatalogMockDataSource>((ref) {
+  return CatalogMockDataSource();
+});
+
 /// Provider del repositorio de catálogo
 final catalogRepositoryProvider = Provider<CatalogRepository>((ref) {
-  final remoteDataSource = ref.watch(catalogRemoteDataSourceProvider);
-  return CatalogRepositoryImpl(remoteDataSource: remoteDataSource, ref: ref);
+  if (AppConfig.useMockData) {
+    final mockDataSource = ref.watch(catalogMockDataSourceProvider);
+    return CatalogRepositoryImpl(
+      mockDataSource: mockDataSource,
+      ref: ref,
+    );
+  } else {
+    final remoteDataSource = ref.watch(catalogRemoteDataSourceProvider);
+    return CatalogRepositoryImpl(
+      remoteDataSource: remoteDataSource,
+      ref: ref,
+    );
+  }
 });
 
 /// Provider de categorías
