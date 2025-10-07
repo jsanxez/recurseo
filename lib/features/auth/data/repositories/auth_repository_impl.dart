@@ -1,21 +1,30 @@
+import 'package:recurseo/core/config/app_config.dart';
 import 'package:recurseo/core/utils/logger.dart';
 import 'package:recurseo/core/utils/result.dart';
 import 'package:recurseo/features/auth/data/datasources/auth_local_datasource.dart';
+import 'package:recurseo/features/auth/data/datasources/auth_mock_datasource.dart';
 import 'package:recurseo/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:recurseo/features/auth/domain/entities/user_entity.dart';
 import 'package:recurseo/features/auth/domain/repositories/auth_repository.dart';
 
 /// Implementación del repositorio de autenticación
 class AuthRepositoryImpl implements AuthRepository {
-  final AuthRemoteDataSource _remoteDataSource;
+  final AuthRemoteDataSource? _remoteDataSource;
+  final AuthMockDataSource? _mockDataSource;
   final AuthLocalDataSource _localDataSource;
   final _logger = const Logger('AuthRepositoryImpl');
 
   AuthRepositoryImpl({
-    required AuthRemoteDataSource remoteDataSource,
+    AuthRemoteDataSource? remoteDataSource,
+    AuthMockDataSource? mockDataSource,
     required AuthLocalDataSource localDataSource,
   })  : _remoteDataSource = remoteDataSource,
-        _localDataSource = localDataSource;
+        _mockDataSource = mockDataSource,
+        _localDataSource = localDataSource {
+    if (AppConfig.useMockData) {
+      _logger.info('🎭 Using MOCK data for authentication');
+    }
+  }
 
   @override
   Future<Result<UserEntity>> login({
@@ -23,11 +32,10 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
   }) async {
     try {
-      // Llamar a la API
-      final response = await _remoteDataSource.login(
-        email: email,
-        password: password,
-      );
+      // Usar mock o API real según configuración
+      final response = AppConfig.useMockData
+          ? await _mockDataSource!.login(email: email, password: password)
+          : await _remoteDataSource!.login(email: email, password: password);
 
       // Guardar datos localmente
       await _localDataSource.saveAuthData(
@@ -58,14 +66,22 @@ class AuthRepositoryImpl implements AuthRepository {
     String? phoneNumber,
   }) async {
     try {
-      // Llamar a la API
-      final response = await _remoteDataSource.register(
-        email: email,
-        password: password,
-        name: name,
-        userType: userType,
-        phoneNumber: phoneNumber,
-      );
+      // Usar mock o API real según configuración
+      final response = AppConfig.useMockData
+          ? await _mockDataSource!.register(
+              name: name,
+              email: email,
+              password: password,
+              userType: userType,
+              phoneNumber: phoneNumber,
+            )
+          : await _remoteDataSource!.register(
+              email: email,
+              password: password,
+              name: name,
+              userType: userType,
+              phoneNumber: phoneNumber,
+            );
 
       // Guardar datos localmente
       await _localDataSource.saveAuthData(
@@ -91,9 +107,13 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Result<void>> logout() async {
     try {
       // Intentar invalidar token en servidor
-      final accessToken = _localDataSource.getAccessToken();
-      if (accessToken != null) {
-        await _remoteDataSource.logout(accessToken);
+      if (AppConfig.useMockData) {
+        await _mockDataSource!.logout();
+      } else {
+        final accessToken = _localDataSource.getAccessToken();
+        if (accessToken != null) {
+          await _remoteDataSource!.logout(accessToken);
+        }
       }
 
       // Limpiar datos locales
@@ -144,8 +164,10 @@ class AuthRepositoryImpl implements AuthRepository {
         return const Failure(message: 'No refresh token available');
       }
 
-      // Llamar a la API para refrescar
-      final response = await _remoteDataSource.refreshToken(refreshToken);
+      // Usar mock o API real según configuración
+      final response = AppConfig.useMockData
+          ? await _mockDataSource!.refreshToken(refreshToken)
+          : await _remoteDataSource!.refreshToken(refreshToken);
 
       // Guardar nuevos tokens
       await _localDataSource.saveAuthData(
@@ -174,7 +196,13 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Result<void>> resetPassword({required String email}) async {
     try {
-      await _remoteDataSource.resetPassword(email);
+      // Solo API real soporta reset password
+      if (AppConfig.useMockData) {
+        _logger.info('Mock: Password reset simulation');
+        return const Success(null);
+      }
+
+      await _remoteDataSource!.resetPassword(email);
       _logger.success('Password reset email sent');
       return const Success(null);
     } catch (e, st) {
