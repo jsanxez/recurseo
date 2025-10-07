@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:recurseo/core/constants/app_colors.dart';
 import 'package:recurseo/core/constants/app_sizes.dart';
+import 'package:recurseo/features/auth/presentation/providers/auth_notifier.dart';
 
 /// Pantalla principal de la aplicación
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
@@ -300,11 +303,12 @@ class _MessagesTab extends StatelessWidget {
 }
 
 // Tab de Perfil
-class _ProfileTab extends StatelessWidget {
+class _ProfileTab extends ConsumerWidget {
   const _ProfileTab();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(currentUserProvider);
     return CustomScrollView(
       slivers: [
         SliverAppBar(
@@ -326,11 +330,11 @@ class _ProfileTab extends StatelessWidget {
                     ),
                     const SizedBox(height: AppSizes.paddingMd),
                     Text(
-                      'Usuario Demo',
+                      user?.name ?? 'Usuario',
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                     Text(
-                      'usuario@email.com',
+                      user?.email ?? 'usuario@email.com',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: AppColors.textSecondary,
                           ),
@@ -392,7 +396,34 @@ class _ProfileTab extends StatelessWidget {
 
               // Botón de cerrar sesión
               OutlinedButton.icon(
-                onPressed: () {},
+                onPressed: () async {
+                  // Mostrar confirmación
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Cerrar Sesión'),
+                      content: const Text('¿Estás seguro que deseas cerrar sesión?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: const Text('Cancelar'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(true),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.error,
+                          ),
+                          child: const Text('Cerrar Sesión'),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  if (confirm == true && context.mounted) {
+                    ref.read(authNotifierProvider.notifier).logout();
+                    context.go('/welcome');
+                  }
+                },
                 icon: const Icon(Icons.logout),
                 label: const Text('Cerrar Sesión'),
                 style: OutlinedButton.styleFrom(

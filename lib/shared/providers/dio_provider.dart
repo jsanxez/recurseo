@@ -24,26 +24,8 @@ final dioProvider = Provider<Dio>((ref) {
     ),
   );
 
-  // Interceptor para autenticación
-  dio.interceptors.add(
-    InterceptorsWrapper(
-      onRequest: (options, handler) async {
-        // TODO: Agregar token de autenticación
-        // final token = await ref.read(authTokenProvider.future);
-        // if (token != null) {
-        //   options.headers['Authorization'] = 'Bearer $token';
-        // }
-        handler.next(options);
-      },
-      onError: (error, handler) async {
-        // Manejo de errores de autenticación
-        if (error.response?.statusCode == 401) {
-          // TODO: Refrescar token o redirigir a login
-        }
-        handler.next(error);
-      },
-    ),
-  );
+  // Nota: El interceptor de autenticación se configura en auth_interceptor.dart
+  // para evitar dependencias circulares
 
   return dio;
 });

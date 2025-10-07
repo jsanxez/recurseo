@@ -51,8 +51,7 @@ class WelcomeScreen extends StatelessWidget {
               // Botones
               ElevatedButton(
                 onPressed: () {
-                  // TODO: Navegar a login
-                  context.go('/home');
+                  context.go('/login');
                 },
                 child: const Text('Iniciar Sesión'),
               ),
@@ -60,8 +59,7 @@ class WelcomeScreen extends StatelessWidget {
 
               OutlinedButton(
                 onPressed: () {
-                  // TODO: Navegar a registro
-                  context.go('/home');
+                  context.go('/register');
                 },
                 child: const Text('Crear Cuenta'),
               ),

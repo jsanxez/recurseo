@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:recurseo/features/auth/presentation/providers/auth_notifier.dart';
+import 'package:recurseo/features/auth/presentation/providers/auth_state.dart';
+import 'package:recurseo/features/auth/presentation/screens/login_screen.dart';
+import 'package:recurseo/features/auth/presentation/screens/register_screen.dart';
 import 'package:recurseo/features/auth/presentation/screens/splash_screen.dart';
 import 'package:recurseo/features/auth/presentation/screens/welcome_screen.dart';
 import 'package:recurseo/features/services/presentation/screens/home_screen.dart';
@@ -8,10 +13,12 @@ import 'package:recurseo/features/services/presentation/screens/home_screen.dart
 class AppRouterConfig {
   AppRouterConfig._();
 
-  static final GoRouter router = GoRouter(
-    initialLocation: '/splash',
-    debugLogDiagnostics: true,
-    routes: [
+  /// Crear router con acceso a Ref para guards
+  static GoRouter router(Ref ref) => GoRouter(
+        initialLocation: '/splash',
+        debugLogDiagnostics: true,
+        refreshListenable: GoRouterRefreshStream(ref),
+        routes: [
       // Splash
       GoRoute(
         path: '/splash',
@@ -33,17 +40,17 @@ class AppRouterConfig {
         builder: (context, state) => const HomeScreen(),
       ),
 
-      // TODO: Agregar rutas de autenticación
-      // GoRoute(
-      //   path: '/login',
-      //   name: 'login',
-      //   builder: (context, state) => const LoginScreen(),
-      // ),
-      // GoRoute(
-      //   path: '/register',
-      //   name: 'register',
-      //   builder: (context, state) => const RegisterScreen(),
-      // ),
+      // Autenticación
+      GoRoute(
+        path: '/login',
+        name: 'login',
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/register',
+        name: 'register',
+        builder: (context, state) => const RegisterScreen(),
+      ),
 
       // TODO: Agregar rutas de servicios
       // GoRoute(
@@ -87,30 +94,55 @@ class AppRouterConfig {
       ),
     ),
 
-    // Redirección (útil para autenticación)
-    redirect: (context, state) {
-      // TODO: Implementar lógica de autenticación
-      // final isAuthenticated = false;
-      // final isGoingToAuth = state.matchedLocation.startsWith('/login') ||
-      //     state.matchedLocation.startsWith('/register') ||
-      //     state.matchedLocation == '/welcome';
+        // Guards de autenticación
+        redirect: (context, state) {
+          final authState = ref.read(authNotifierProvider);
+          final isAuthenticated = authState is Authenticated;
 
-      // if (!isAuthenticated && !isGoingToAuth) {
-      //   return '/welcome';
-      // }
-      // if (isAuthenticated && isGoingToAuth) {
-      //   return '/home';
-      // }
+          final isGoingToAuth = state.matchedLocation == '/login' ||
+              state.matchedLocation == '/register' ||
+              state.matchedLocation == '/welcome';
 
-      // Redirección temporal del splash a welcome
-      if (state.matchedLocation == '/splash') {
-        Future.delayed(const Duration(seconds: 2), () {
-          // Aquí verificarías si hay sesión
-          // Por ahora, siempre va a welcome
-        });
-      }
+          final isGoingToSplash = state.matchedLocation == '/splash';
 
-      return null; // No redirigir
-    },
-  );
+          // Permitir splash siempre
+          if (isGoingToSplash) {
+            // Redirigir después de 2 segundos
+            Future.delayed(const Duration(seconds: 2), () {
+              if (isAuthenticated) {
+                ref.read(goRouterProvider).go('/home');
+              } else {
+                ref.read(goRouterProvider).go('/welcome');
+              }
+            });
+            return null;
+          }
+
+          // Si no está autenticado y no va a auth, redirigir a welcome
+          if (!isAuthenticated && !isGoingToAuth) {
+            return '/welcome';
+          }
+
+          // Si está autenticado y va a auth, redirigir a home
+          if (isAuthenticated && isGoingToAuth) {
+            return '/home';
+          }
+
+          return null; // Permitir navegación
+        },
+      );
 }
+
+/// Helper para refresh del router cuando cambia el estado de auth
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Ref ref) {
+    ref.listen<AuthState>(authNotifierProvider, (_, __) {
+      notifyListeners();
+    });
+  }
+}
+
+/// Provider del router
+final goRouterProvider = Provider<GoRouter>((ref) {
+  return AppRouterConfig.router(ref);
+});
