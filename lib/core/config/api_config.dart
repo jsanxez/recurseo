@@ -13,6 +13,8 @@ class ApiConfig {
   static const String categories = '/categories';
   static const String conversations = '/conversations';
   static const String messages = '/messages';
+  static const String reviews = '/reviews';
+  static const String providers = '/providers';
 
   // Timeouts
   static const Duration connectTimeout = Duration(seconds: 30);

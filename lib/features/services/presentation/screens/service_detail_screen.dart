@@ -5,6 +5,8 @@ import 'package:recurseo/core/constants/app_colors.dart';
 import 'package:recurseo/core/constants/app_sizes.dart';
 import 'package:recurseo/core/utils/result.dart';
 import 'package:recurseo/features/chat/presentation/providers/chat_providers.dart';
+import 'package:recurseo/features/reviews/presentation/providers/review_providers.dart';
+import 'package:recurseo/features/reviews/presentation/widgets/review_card.dart';
 import 'package:recurseo/features/services/presentation/providers/catalog_providers.dart';
 
 /// Pantalla de detalle de un servicio
@@ -121,6 +123,15 @@ class ServiceDetailScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: AppSizes.paddingXl),
 
+                  // Reseñas
+                  Text(
+                    'Reseñas',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  const SizedBox(height: AppSizes.paddingMd),
+                  _buildReviewsSection(ref, service.id),
+                  const SizedBox(height: AppSizes.paddingXl),
+
                   // Botón de solicitar
                   FilledButton.icon(
                     onPressed: () {
@@ -183,6 +194,82 @@ class ServiceDetailScreen extends ConsumerWidget {
                 child: const Text('Volver'),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReviewsSection(WidgetRef ref, String serviceId) {
+    final reviewsAsync = ref.watch(serviceReviewsProvider(serviceId));
+    final statsAsync = ref.watch(serviceReviewStatsProvider(serviceId));
+
+    return reviewsAsync.when(
+      data: (reviews) {
+        if (reviews.isEmpty) {
+          return Card(
+            child: Padding(
+              padding: const EdgeInsets.all(AppSizes.paddingLg),
+              child: Center(
+                child: Column(
+                  children: [
+                    Icon(Icons.rate_review_outlined,
+                        size: 48, color: Colors.grey[400]),
+                    const SizedBox(height: AppSizes.paddingSm),
+                    Text(
+                      'Aún no hay reseñas',
+                      style: TextStyle(color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Estadísticas
+            statsAsync.when(
+              data: (stats) => ReviewsStatsWidget(
+                averageRating: stats.averageRating,
+                totalReviews: stats.totalReviews,
+                verifiedReviews: stats.verifiedReviews,
+              ),
+              loading: () => const SizedBox.shrink(),
+              error: (_, __) => const SizedBox.shrink(),
+            ),
+            const SizedBox(height: AppSizes.paddingMd),
+
+            // Lista de reseñas (máximo 3)
+            ...reviews.take(3).map((review) => ReviewCard(review: review)),
+
+            // Botón para ver todas las reseñas
+            if (reviews.length > 3)
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    // TODO: Navegar a pantalla de todas las reseñas
+                  },
+                  child: Text('Ver todas las ${reviews.length} reseñas'),
+                ),
+              ),
+          ],
+        );
+      },
+      loading: () => const Center(
+        child: Padding(
+          padding: EdgeInsets.all(AppSizes.paddingLg),
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      error: (error, stack) => Card(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSizes.paddingMd),
+          child: Text(
+            'Error al cargar reseñas',
+            style: TextStyle(color: Colors.grey[600]),
           ),
         ),
       ),
