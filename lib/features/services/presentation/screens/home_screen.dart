@@ -5,7 +5,9 @@ import 'package:recurseo/core/constants/app_colors.dart';
 import 'package:recurseo/core/constants/app_sizes.dart';
 import 'package:recurseo/features/auth/domain/entities/user_entity.dart';
 import 'package:recurseo/features/auth/presentation/providers/auth_notifier.dart';
+import 'package:recurseo/features/auth/presentation/providers/auth_state.dart';
 import 'package:recurseo/features/chat/presentation/providers/chat_providers.dart';
+import 'package:recurseo/features/requests/domain/entities/request_entity.dart';
 import 'package:recurseo/features/requests/presentation/providers/request_providers.dart';
 import 'package:recurseo/features/services/presentation/providers/catalog_providers.dart';
 
@@ -374,7 +376,7 @@ class _ClientRequestsContent extends ConsumerWidget {
     );
   }
 
-  Color _getStatusColor(request) {
+  Color _getStatusColor(RequestEntity request) {
     return switch (request.status) {
       RequestStatus.pending => AppColors.warning,
       RequestStatus.accepted => AppColors.success,

@@ -38,4 +38,11 @@ class AppSizes {
 
   // Ancho máximo de contenido
   static const double maxContentWidth = 600.0;
+
+  // Aliases cortos para uso común
+  static const double xs = paddingXs;
+  static const double sm = paddingSm;
+  static const double md = paddingMd;
+  static const double lg = paddingLg;
+  static const double xl = paddingXl;
 }

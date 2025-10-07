@@ -165,7 +165,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   label: 'Nombre completo',
                   hint: 'Juan Pérez',
                   prefixIcon: Icons.person_outline,
-                  validator: (value) => Validators.required(value, 'El nombre'),
+                  validator: Validators.required('El nombre es requerido'),
                   enabled: !isLoading,
                 ),
                 const SizedBox(height: AppSizes.paddingMd),

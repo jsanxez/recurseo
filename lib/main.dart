@@ -2,18 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recurseo/core/config/router_config.dart';
 import 'package:recurseo/core/theme/app_theme.dart';
+import 'package:recurseo/shared/providers/shared_preferences_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+Future<void> main() async {
   // Asegurar inicialización de Flutter
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Inicializar SharedPreferences
+  final sharedPreferences = await SharedPreferences.getInstance();
 
   // TODO: Inicializar Firebase si se usa
   // await Firebase.initializeApp();
 
   runApp(
     // ProviderScope es necesario para Riverpod
-    const ProviderScope(
-      child: MainApp(),
+    ProviderScope(
+      overrides: [
+        // Proveer la instancia de SharedPreferences
+        sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+      ],
+      child: const MainApp(),
     ),
   );
 }

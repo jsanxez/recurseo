@@ -3,11 +3,13 @@ class Validators {
   Validators._();
 
   /// Valida que el campo no esté vacío
-  static String? required(String? value, [String? fieldName]) {
-    if (value == null || value.trim().isEmpty) {
-      return '${fieldName ?? 'Este campo'} es requerido';
-    }
-    return null;
+  static String? Function(String?) required([String? message]) {
+    return (String? value) {
+      if (value == null || value.trim().isEmpty) {
+        return message ?? 'Este campo es requerido';
+      }
+      return null;
+    };
   }
 
   /// Valida formato de email

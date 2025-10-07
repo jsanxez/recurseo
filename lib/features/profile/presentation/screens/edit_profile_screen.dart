@@ -159,7 +159,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 controller: _nameController,
                 label: 'Nombre completo',
                 prefixIcon: Icons.person_outline,
-                validator: (value) => Validators.required(value, 'El nombre'),
+                validator: Validators.required('El nombre es requerido'),
                 enabled: !_isLoading,
               ),
               const SizedBox(height: AppSizes.paddingMd),

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recurseo/core/utils/result.dart';
 import 'package:recurseo/features/auth/presentation/providers/auth_notifier.dart';
+import 'package:recurseo/features/auth/presentation/providers/auth_state.dart';
 import 'package:recurseo/features/requests/data/datasources/request_remote_datasource.dart';
 import 'package:recurseo/features/requests/data/repositories/request_repository_impl.dart';
 import 'package:recurseo/features/requests/domain/entities/request_entity.dart';

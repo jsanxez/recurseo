@@ -5,6 +5,7 @@ import 'package:recurseo/core/constants/app_colors.dart';
 import 'package:recurseo/core/constants/app_sizes.dart';
 import 'package:recurseo/core/utils/result.dart';
 import 'package:recurseo/features/auth/presentation/providers/auth_notifier.dart';
+import 'package:recurseo/features/auth/presentation/providers/auth_state.dart';
 import 'package:recurseo/features/requests/domain/entities/request_entity.dart';
 import 'package:recurseo/features/requests/presentation/providers/request_providers.dart';
 

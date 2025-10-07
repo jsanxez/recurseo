@@ -1,22 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:recurseo/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:recurseo/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:recurseo/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:recurseo/features/auth/domain/repositories/auth_repository.dart';
 import 'package:recurseo/shared/providers/dio_provider.dart';
-
-/// Provider de SharedPreferences
-final sharedPreferencesProvider = FutureProvider<SharedPreferences>((ref) async {
-  return await SharedPreferences.getInstance();
-});
+import 'package:recurseo/shared/providers/shared_preferences_provider.dart';
 
 /// Provider del local datasource
 final authLocalDataSourceProvider = Provider<AuthLocalDataSource>((ref) {
-  final prefs = ref.watch(sharedPreferencesProvider).value;
-  if (prefs == null) {
-    throw Exception('SharedPreferences not initialized');
-  }
+  final prefs = ref.watch(sharedPreferencesProvider);
   return AuthLocalDataSource(prefs);
 });
 

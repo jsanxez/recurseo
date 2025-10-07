@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:recurseo/core/constants/app_colors.dart';
 import 'package:recurseo/core/constants/app_sizes.dart';
+import 'package:recurseo/features/auth/presentation/providers/auth_notifier.dart';
+import 'package:recurseo/features/auth/presentation/providers/auth_state.dart';
 import 'package:recurseo/features/chat/domain/entities/conversation_entity.dart';
 import 'package:recurseo/features/chat/presentation/providers/chat_providers.dart';
-import 'package:recurseo/features/auth/presentation/providers/auth_notifier.dart';
 
 /// Pantalla de lista de conversaciones
 class ConversationsScreen extends ConsumerWidget {
