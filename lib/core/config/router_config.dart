@@ -10,7 +10,10 @@ import 'package:recurseo/features/auth/presentation/screens/welcome_screen.dart'
 import 'package:recurseo/features/profile/presentation/screens/edit_profile_screen.dart';
 import 'package:recurseo/features/profile/presentation/screens/provider_public_profile_screen.dart';
 import 'package:recurseo/features/profile/presentation/screens/settings_screen.dart';
+import 'package:recurseo/features/services/presentation/screens/categories_screen.dart';
 import 'package:recurseo/features/services/presentation/screens/home_screen.dart';
+import 'package:recurseo/features/services/presentation/screens/service_detail_screen.dart';
+import 'package:recurseo/features/services/presentation/screens/services_by_category_screen.dart';
 
 /// Configuración de rutas de la aplicación
 class AppRouterConfig {
@@ -75,15 +78,28 @@ class AppRouterConfig {
         builder: (context, state) => const SettingsScreen(),
       ),
 
-      // TODO: Agregar rutas de servicios
-      // GoRoute(
-      //   path: '/services/:id',
-      //   name: 'service-detail',
-      //   builder: (context, state) {
-      //     final id = state.pathParameters['id']!;
-      //     return ServiceDetailScreen(serviceId: id);
-      //   },
-      // ),
+      // Servicios
+      GoRoute(
+        path: '/categories',
+        name: 'categories',
+        builder: (context, state) => const CategoriesScreen(),
+      ),
+      GoRoute(
+        path: '/services/category/:categoryId',
+        name: 'services-by-category',
+        builder: (context, state) {
+          final categoryId = state.pathParameters['categoryId']!;
+          return ServicesByCategoryScreen(categoryId: categoryId);
+        },
+      ),
+      GoRoute(
+        path: '/services/:id',
+        name: 'service-detail',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return ServiceDetailScreen(serviceId: id);
+        },
+      ),
 
       // TODO: Agregar rutas de solicitudes
       // GoRoute(

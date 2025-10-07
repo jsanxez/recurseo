@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:recurseo/core/constants/app_colors.dart';
 import 'package:recurseo/core/constants/app_sizes.dart';
 import 'package:recurseo/features/auth/presentation/providers/auth_notifier.dart';
+import 'package:recurseo/features/services/presentation/providers/catalog_providers.dart';
 
 /// Pantalla principal de la aplicación
 class HomeScreen extends ConsumerStatefulWidget {
@@ -87,12 +88,23 @@ class _HomeTab extends StatelessWidget {
               const SizedBox(height: AppSizes.paddingLg),
 
               // Categorías populares
-              Text(
-                'Categorías Populares',
-                style: Theme.of(context).textTheme.headlineMedium,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Categorías Populares',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      context.push('/categories');
+                    },
+                    child: const Text('Ver todas'),
+                  ),
+                ],
               ),
               const SizedBox(height: AppSizes.paddingMd),
-              _CategoriesGrid(),
+              const _CategoriesGrid(),
               const SizedBox(height: AppSizes.paddingLg),
 
               // Servicios destacados
@@ -128,53 +140,64 @@ class _SearchBar extends StatelessWidget {
 }
 
 // Grid de categorías
-class _CategoriesGrid extends StatelessWidget {
-  final List<Map<String, dynamic>> categories = [
-    {'icon': Icons.build, 'name': 'Reparaciones', 'color': Colors.blue},
-    {'icon': Icons.cleaning_services, 'name': 'Limpieza', 'color': Colors.green},
-    {'icon': Icons.electrical_services, 'name': 'Electricidad', 'color': Colors.orange},
-    {'icon': Icons.plumbing, 'name': 'Plomería', 'color': Colors.red},
-    {'icon': Icons.format_paint, 'name': 'Pintura', 'color': Colors.purple},
-    {'icon': Icons.computer, 'name': 'Tecnología', 'color': Colors.teal},
-  ];
+class _CategoriesGrid extends ConsumerWidget {
+  const _CategoriesGrid();
 
   @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: AppSizes.paddingMd,
-        mainAxisSpacing: AppSizes.paddingMd,
-        childAspectRatio: 1,
-      ),
-      itemCount: categories.length,
-      itemBuilder: (context, index) {
-        final category = categories[index];
-        return Card(
-          child: InkWell(
-            onTap: () {},
-            borderRadius: BorderRadius.circular(12),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  category['icon'],
-                  size: 32,
-                  color: category['color'],
-                ),
-                const SizedBox(height: AppSizes.paddingSm),
-                Text(
-                  category['name'],
-                  style: Theme.of(context).textTheme.bodySmall,
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final categoriesAsync = ref.watch(categoriesProvider);
+
+    return categoriesAsync.when(
+      data: (categories) {
+        final displayCategories = categories.take(6).toList();
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: AppSizes.paddingMd,
+            mainAxisSpacing: AppSizes.paddingMd,
+            childAspectRatio: 1,
           ),
+          itemCount: displayCategories.length,
+          itemBuilder: (context, index) {
+            final category = displayCategories[index];
+            return Card(
+              child: InkWell(
+                onTap: () {
+                  context.push('/services/category/${category.id}');
+                },
+                borderRadius: BorderRadius.circular(12),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      category.icon,
+                      size: 32,
+                      color: category.color,
+                    ),
+                    const SizedBox(height: AppSizes.paddingSm),
+                    Text(
+                      category.name,
+                      style: Theme.of(context).textTheme.bodySmall,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
+      loading: () => const Center(
+        child: Padding(
+          padding: EdgeInsets.all(AppSizes.paddingXl),
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      error: (_, __) => const SizedBox.shrink(),
     );
   }
 }
