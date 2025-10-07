@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:recurseo/core/config/app_config.dart';
 import 'package:recurseo/core/utils/result.dart';
 import 'package:recurseo/features/auth/presentation/providers/auth_notifier.dart';
 import 'package:recurseo/features/auth/presentation/providers/auth_state.dart';
+import 'package:recurseo/features/requests/data/datasources/request_mock_datasource.dart';
 import 'package:recurseo/features/requests/data/datasources/request_remote_datasource.dart';
 import 'package:recurseo/features/requests/data/repositories/request_repository_impl.dart';
 import 'package:recurseo/features/requests/domain/entities/request_entity.dart';
@@ -15,10 +17,26 @@ final requestRemoteDataSourceProvider =
   return RequestRemoteDataSource(dio);
 });
 
+/// Provider del mock datasource
+final requestMockDataSourceProvider = Provider<RequestMockDataSource>((ref) {
+  return RequestMockDataSource();
+});
+
 /// Provider del repositorio de solicitudes
 final requestRepositoryProvider = Provider<RequestRepository>((ref) {
-  final remoteDataSource = ref.watch(requestRemoteDataSourceProvider);
-  return RequestRepositoryImpl(remoteDataSource: remoteDataSource, ref: ref);
+  if (AppConfig.useMockData) {
+    final mockDataSource = ref.watch(requestMockDataSourceProvider);
+    return RequestRepositoryImpl(
+      mockDataSource: mockDataSource,
+      ref: ref,
+    );
+  } else {
+    final remoteDataSource = ref.watch(requestRemoteDataSourceProvider);
+    return RequestRepositoryImpl(
+      remoteDataSource: remoteDataSource,
+      ref: ref,
+    );
+  }
 });
 
 /// Provider de solicitudes del cliente actual

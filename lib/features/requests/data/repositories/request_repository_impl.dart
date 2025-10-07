@@ -1,21 +1,32 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:recurseo/core/config/app_config.dart';
+import 'package:recurseo/core/utils/logger.dart';
 import 'package:recurseo/core/utils/result.dart';
 import 'package:recurseo/features/auth/presentation/providers/auth_notifier.dart';
 import 'package:recurseo/features/auth/presentation/providers/auth_state.dart';
+import 'package:recurseo/features/requests/data/datasources/request_mock_datasource.dart';
 import 'package:recurseo/features/requests/data/datasources/request_remote_datasource.dart';
 import 'package:recurseo/features/requests/domain/entities/request_entity.dart';
 import 'package:recurseo/features/requests/domain/repositories/request_repository.dart';
 
 /// Implementación del repositorio de solicitudes
 class RequestRepositoryImpl implements RequestRepository {
-  final RequestRemoteDataSource _remoteDataSource;
+  final RequestRemoteDataSource? _remoteDataSource;
+  final RequestMockDataSource? _mockDataSource;
   final Ref _ref;
+  final _logger = const Logger('RequestRepositoryImpl');
 
   RequestRepositoryImpl({
-    required RequestRemoteDataSource remoteDataSource,
+    RequestRemoteDataSource? remoteDataSource,
+    RequestMockDataSource? mockDataSource,
     required Ref ref,
   })  : _remoteDataSource = remoteDataSource,
-        _ref = ref;
+        _mockDataSource = mockDataSource,
+        _ref = ref {
+    if (AppConfig.useMockData) {
+      _logger.info('🎭 Using MOCK data for requests');
+    }
+  }
 
   String get _currentUserId {
     final authState = _ref.read(authNotifierProvider);
@@ -37,17 +48,29 @@ class RequestRepositoryImpl implements RequestRepository {
     double? budgetTo,
   }) async {
     try {
-      final request = await _remoteDataSource.createRequest(
-        clientId: _currentUserId,
-        providerId: providerId,
-        serviceId: serviceId,
-        title: title,
-        description: description,
-        location: location,
-        preferredDate: preferredDate,
-        budgetFrom: budgetFrom,
-        budgetTo: budgetTo,
-      );
+      final request = AppConfig.useMockData
+          ? await _mockDataSource!.createRequest(
+              clientId: _currentUserId,
+              providerId: providerId,
+              serviceId: serviceId,
+              title: title,
+              description: description,
+              location: location,
+              preferredDate: preferredDate,
+              budgetFrom: budgetFrom,
+              budgetTo: budgetTo,
+            )
+          : await _remoteDataSource!.createRequest(
+              clientId: _currentUserId,
+              providerId: providerId,
+              serviceId: serviceId,
+              title: title,
+              description: description,
+              location: location,
+              preferredDate: preferredDate,
+              budgetFrom: budgetFrom,
+              budgetTo: budgetTo,
+            );
       return Success(request);
     } catch (e) {
       return Failure(
@@ -61,7 +84,9 @@ class RequestRepositoryImpl implements RequestRepository {
   Future<Result<List<RequestEntity>>> getClientRequests(
       String clientId) async {
     try {
-      final requests = await _remoteDataSource.getClientRequests(clientId);
+      final requests = AppConfig.useMockData
+          ? await _mockDataSource!.getClientRequests(clientId)
+          : await _remoteDataSource!.getClientRequests(clientId);
       return Success(requests);
     } catch (e) {
       return Failure(
@@ -75,7 +100,9 @@ class RequestRepositoryImpl implements RequestRepository {
   Future<Result<List<RequestEntity>>> getProviderRequests(
       String providerId) async {
     try {
-      final requests = await _remoteDataSource.getProviderRequests(providerId);
+      final requests = AppConfig.useMockData
+          ? await _mockDataSource!.getProviderRequests(providerId)
+          : await _remoteDataSource!.getProviderRequests(providerId);
       return Success(requests);
     } catch (e) {
       return Failure(
@@ -88,7 +115,9 @@ class RequestRepositoryImpl implements RequestRepository {
   @override
   Future<Result<RequestEntity>> getRequestById(String id) async {
     try {
-      final request = await _remoteDataSource.getRequestById(id);
+      final request = AppConfig.useMockData
+          ? await _mockDataSource!.getRequestById(id)
+          : await _remoteDataSource!.getRequestById(id);
       return Success(request);
     } catch (e) {
       return Failure(
@@ -104,11 +133,16 @@ class RequestRepositoryImpl implements RequestRepository {
     String? response,
   }) async {
     try {
-      final request = await _remoteDataSource.updateRequestStatus(
-        requestId,
-        'accepted',
-        response: response,
-      );
+      final request = AppConfig.useMockData
+          ? await _mockDataSource!.acceptRequest(
+              requestId: requestId,
+              response: response,
+            )
+          : await _remoteDataSource!.updateRequestStatus(
+              requestId,
+              'accepted',
+              response: response,
+            );
       return Success(request);
     } catch (e) {
       return Failure(
@@ -124,11 +158,16 @@ class RequestRepositoryImpl implements RequestRepository {
     required String reason,
   }) async {
     try {
-      final request = await _remoteDataSource.updateRequestStatus(
-        requestId,
-        'rejected',
-        response: reason,
-      );
+      final request = AppConfig.useMockData
+          ? await _mockDataSource!.rejectRequest(
+              requestId: requestId,
+              response: reason,
+            )
+          : await _remoteDataSource!.updateRequestStatus(
+              requestId,
+              'rejected',
+              response: reason,
+            );
       return Success(request);
     } catch (e) {
       return Failure(
@@ -141,10 +180,12 @@ class RequestRepositoryImpl implements RequestRepository {
   @override
   Future<Result<RequestEntity>> markAsInProgress(String requestId) async {
     try {
-      final request = await _remoteDataSource.updateRequestStatus(
-        requestId,
-        'in_progress',
-      );
+      final request = AppConfig.useMockData
+          ? await _mockDataSource!.markInProgress(requestId)
+          : await _remoteDataSource!.updateRequestStatus(
+              requestId,
+              'in_progress',
+            );
       return Success(request);
     } catch (e) {
       return Failure(
@@ -157,10 +198,12 @@ class RequestRepositoryImpl implements RequestRepository {
   @override
   Future<Result<RequestEntity>> markAsCompleted(String requestId) async {
     try {
-      final request = await _remoteDataSource.updateRequestStatus(
-        requestId,
-        'completed',
-      );
+      final request = AppConfig.useMockData
+          ? await _mockDataSource!.markCompleted(requestId)
+          : await _remoteDataSource!.updateRequestStatus(
+              requestId,
+              'completed',
+            );
       return Success(request);
     } catch (e) {
       return Failure(
@@ -173,11 +216,17 @@ class RequestRepositoryImpl implements RequestRepository {
   @override
   Future<Result<RequestEntity>> cancelRequest(String requestId) async {
     try {
-      final request = await _remoteDataSource.updateRequestStatus(
-        requestId,
-        'cancelled',
-      );
-      return Success(request);
+      if (AppConfig.useMockData) {
+        await _mockDataSource!.cancelRequest(requestId);
+        final request = await _mockDataSource.getRequestById(requestId);
+        return Success(request);
+      } else {
+        final request = await _remoteDataSource!.updateRequestStatus(
+          requestId,
+          'cancelled',
+        );
+        return Success(request);
+      }
     } catch (e) {
       return Failure(
         message: 'Error al cancelar la solicitud',
