@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:recurseo/core/constants/app_colors.dart';
 import 'package:recurseo/core/constants/app_sizes.dart';
+import 'package:recurseo/features/auth/domain/entities/user_entity.dart';
 import 'package:recurseo/features/auth/presentation/providers/auth_notifier.dart';
+import 'package:recurseo/features/requests/presentation/providers/request_providers.dart';
 import 'package:recurseo/features/services/presentation/providers/catalog_providers.dart';
 
 /// Pantalla principal de la aplicación
@@ -230,59 +232,318 @@ class _ServicesList extends StatelessWidget {
 }
 
 // Tab de Solicitudes
-class _RequestsTab extends StatelessWidget {
+class _RequestsTab extends ConsumerWidget {
   const _RequestsTab();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authNotifierProvider);
+    final isProvider =
+        authState is Authenticated && authState.user.userType == UserType.provider;
+
     return CustomScrollView(
       slivers: [
         SliverAppBar(
-          title: const Text('Mis Solicitudes'),
+          title: Text(isProvider ? 'Solicitudes Recibidas' : 'Mis Solicitudes'),
           floating: true,
+          actions: [
+            if (!isProvider)
+              TextButton(
+                onPressed: () => context.push('/requests'),
+                child: const Text('Ver todas'),
+              ),
+          ],
         ),
-        SliverPadding(
+        if (isProvider)
+          _ProviderRequestsContent()
+        else
+          _ClientRequestsContent(),
+      ],
+    );
+  }
+}
+
+class _ClientRequestsContent extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final requestsAsync = ref.watch(clientRequestsProvider);
+
+    return requestsAsync.when(
+      data: (requests) {
+        if (requests.isEmpty) {
+          return SliverFillRemaining(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.inbox_outlined,
+                    size: 64,
+                    color: Colors.grey[400],
+                  ),
+                  const SizedBox(height: AppSizes.md),
+                  Text(
+                    'No tienes solicitudes',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Colors.grey[600],
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        final displayRequests = requests.take(5).toList();
+        return SliverPadding(
           padding: const EdgeInsets.all(AppSizes.paddingMd),
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
+                final request = displayRequests[index];
                 return Card(
                   margin: const EdgeInsets.only(bottom: AppSizes.paddingMd),
-                  child: Padding(
-                    padding: const EdgeInsets.all(AppSizes.paddingMd),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Solicitud #${1000 + index}',
-                              style: Theme.of(context).textTheme.headlineSmall,
-                            ),
-                            Chip(
-                              label: const Text('Pendiente'),
-                              backgroundColor: AppColors.warning.withValues(alpha: 0.2),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: AppSizes.paddingSm),
-                        const Text('Reparación de tubería'),
-                        const SizedBox(height: AppSizes.paddingSm),
-                        Text(
-                          'Hace 2 horas',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
+                  child: InkWell(
+                    onTap: () => context.push('/requests/${request.id}'),
+                    borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppSizes.paddingMd),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  request.title,
+                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Chip(
+                                label: Text(request.statusText),
+                                backgroundColor:
+                                    _getStatusColor(request).withValues(alpha: 0.2),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: AppSizes.paddingSm),
+                          Text(
+                            request.description,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: AppSizes.paddingSm),
+                          Text(
+                            '${request.createdAt.day}/${request.createdAt.month}/${request.createdAt.year}',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: Colors.grey[600],
+                                ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
               },
-              childCount: 3,
+              childCount: displayRequests.length,
             ),
           ),
+        );
+      },
+      loading: () => const SliverFillRemaining(
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (_, __) => SliverFillRemaining(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: AppColors.error),
+              const SizedBox(height: AppSizes.md),
+              const Text('Error al cargar solicitudes'),
+            ],
+          ),
         ),
-      ],
+      ),
+    );
+  }
+
+  Color _getStatusColor(request) {
+    return switch (request.status) {
+      RequestStatus.pending => AppColors.warning,
+      RequestStatus.accepted => AppColors.success,
+      RequestStatus.rejected => AppColors.error,
+      RequestStatus.inProgress => AppColors.info,
+      RequestStatus.completed => AppColors.success,
+      RequestStatus.cancelled => Colors.grey,
+    };
+  }
+}
+
+class _ProviderRequestsContent extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final requestsAsync = ref.watch(pendingProviderRequestsProvider);
+
+    return requestsAsync.when(
+      data: (requests) {
+        if (requests.isEmpty) {
+          return SliverFillRemaining(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.inbox_outlined,
+                    size: 64,
+                    color: Colors.grey[400],
+                  ),
+                  const SizedBox(height: AppSizes.md),
+                  Text(
+                    'No tienes solicitudes pendientes',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Colors.grey[600],
+                        ),
+                  ),
+                  const SizedBox(height: AppSizes.sm),
+                  TextButton(
+                    onPressed: () => context.push('/provider/requests'),
+                    child: const Text('Ver todas las solicitudes'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return SliverPadding(
+          padding: const EdgeInsets.all(AppSizes.paddingMd),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                final request = requests[index];
+                return Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.only(bottom: AppSizes.paddingMd),
+                  child: InkWell(
+                    onTap: () => context.push('/requests/${request.id}'),
+                    borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                        border: Border.all(
+                          color: AppColors.warning.withValues(alpha: 0.5),
+                          width: 2,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppSizes.paddingMd),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: AppSizes.sm,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.secondary,
+                                    borderRadius:
+                                        BorderRadius.circular(AppSizes.radiusSm),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Icons.fiber_new,
+                                          size: 16, color: Colors.white),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        'NUEVA',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: AppSizes.sm),
+                            Text(
+                              request.title,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: AppSizes.xs),
+                            Text(
+                              request.description,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            if (request.budgetFrom != null &&
+                                request.budgetTo != null) ...[
+                              const SizedBox(height: AppSizes.sm),
+                              Row(
+                                children: [
+                                  const Icon(Icons.attach_money,
+                                      size: 16, color: AppColors.success),
+                                  Text(
+                                    '\$${request.budgetFrom!.toStringAsFixed(0)} - \$${request.budgetTo!.toStringAsFixed(0)}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(
+                                          color: AppColors.success,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+              childCount: requests.length,
+            ),
+          ),
+        );
+      },
+      loading: () => const SliverFillRemaining(
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (_, __) => SliverFillRemaining(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: AppColors.error),
+              const SizedBox(height: AppSizes.md),
+              const Text('Error al cargar solicitudes'),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

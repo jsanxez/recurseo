@@ -10,6 +10,10 @@ import 'package:recurseo/features/auth/presentation/screens/welcome_screen.dart'
 import 'package:recurseo/features/profile/presentation/screens/edit_profile_screen.dart';
 import 'package:recurseo/features/profile/presentation/screens/provider_public_profile_screen.dart';
 import 'package:recurseo/features/profile/presentation/screens/settings_screen.dart';
+import 'package:recurseo/features/requests/presentation/screens/create_request_screen.dart';
+import 'package:recurseo/features/requests/presentation/screens/provider_requests_screen.dart';
+import 'package:recurseo/features/requests/presentation/screens/request_detail_screen.dart';
+import 'package:recurseo/features/requests/presentation/screens/request_list_screen.dart';
 import 'package:recurseo/features/services/presentation/screens/categories_screen.dart';
 import 'package:recurseo/features/services/presentation/screens/home_screen.dart';
 import 'package:recurseo/features/services/presentation/screens/service_detail_screen.dart';
@@ -101,12 +105,37 @@ class AppRouterConfig {
         },
       ),
 
-      // TODO: Agregar rutas de solicitudes
-      // GoRoute(
-      //   path: '/requests/create',
-      //   name: 'create-request',
-      //   builder: (context, state) => const CreateRequestScreen(),
-      // ),
+      // Solicitudes
+      GoRoute(
+        path: '/requests',
+        name: 'requests',
+        builder: (context, state) => const RequestListScreen(),
+      ),
+      GoRoute(
+        path: '/requests/create/:providerId/:serviceId',
+        name: 'create-request',
+        builder: (context, state) {
+          final providerId = state.pathParameters['providerId']!;
+          final serviceId = state.pathParameters['serviceId']!;
+          return CreateRequestScreen(
+            providerId: providerId,
+            serviceId: serviceId,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/requests/:id',
+        name: 'request-detail',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return RequestDetailScreen(requestId: id);
+        },
+      ),
+      GoRoute(
+        path: '/provider/requests',
+        name: 'provider-requests',
+        builder: (context, state) => const ProviderRequestsScreen(),
+      ),
     ],
 
     // Manejo de errores

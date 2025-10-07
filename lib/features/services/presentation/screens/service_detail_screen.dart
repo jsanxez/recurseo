@@ -120,18 +120,15 @@ class ServiceDetailScreen extends ConsumerWidget {
                   const SizedBox(height: AppSizes.paddingXl),
 
                   // Botón de solicitar
-                  ElevatedButton.icon(
+                  FilledButton.icon(
                     onPressed: () {
-                      // TODO: Crear solicitud
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Funcionalidad próximamente'),
-                        ),
+                      context.push(
+                        '/requests/create/${service.providerId}/${service.id}',
                       );
                     },
                     icon: const Icon(Icons.send),
                     label: const Text('Solicitar Servicio'),
-                    style: ElevatedButton.styleFrom(
+                    style: FilledButton.styleFrom(
                       minimumSize: const Size(double.infinity, 56),
                     ),
                   ),
