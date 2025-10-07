@@ -190,16 +190,8 @@ class AppRouterConfig {
 
           final isGoingToSplash = state.matchedLocation == '/splash';
 
-          // Permitir splash siempre
+          // Permitir splash siempre (la navegación se maneja dentro del SplashScreen)
           if (isGoingToSplash) {
-            // Redirigir después de 2 segundos
-            Future.delayed(const Duration(seconds: 2), () {
-              if (isAuthenticated) {
-                ref.read(goRouterProvider).go('/home');
-              } else {
-                ref.read(goRouterProvider).go('/welcome');
-              }
-            });
             return null;
           }
 

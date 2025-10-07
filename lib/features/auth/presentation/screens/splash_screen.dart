@@ -1,9 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:recurseo/core/constants/app_colors.dart';
+import 'package:recurseo/features/auth/presentation/providers/auth_notifier.dart';
+import 'package:recurseo/features/auth/presentation/providers/auth_state.dart';
 
 /// Pantalla de bienvenida/carga inicial
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
+
+  @override
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends ConsumerState<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _navigateToNextScreen();
+  }
+
+  Future<void> _navigateToNextScreen() async {
+    // Esperar 2 segundos para mostrar el splash
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (!mounted) return;
+
+    // Verificar estado de autenticación
+    final authState = ref.read(authNotifierProvider);
+    final isAuthenticated = authState is Authenticated;
+
+    // Navegar a la pantalla correspondiente
+    if (isAuthenticated) {
+      context.go('/home');
+    } else {
+      context.go('/welcome');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +47,7 @@ class SplashScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Logo o icono de la app
-            Icon(
+            const Icon(
               Icons.handyman_rounded,
               size: 80,
               color: Colors.white,
