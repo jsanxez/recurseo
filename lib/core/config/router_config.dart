@@ -7,6 +7,9 @@ import 'package:recurseo/features/auth/presentation/screens/login_screen.dart';
 import 'package:recurseo/features/auth/presentation/screens/register_screen.dart';
 import 'package:recurseo/features/auth/presentation/screens/splash_screen.dart';
 import 'package:recurseo/features/auth/presentation/screens/welcome_screen.dart';
+import 'package:recurseo/features/profile/presentation/screens/edit_profile_screen.dart';
+import 'package:recurseo/features/profile/presentation/screens/provider_public_profile_screen.dart';
+import 'package:recurseo/features/profile/presentation/screens/settings_screen.dart';
 import 'package:recurseo/features/services/presentation/screens/home_screen.dart';
 
 /// Configuración de rutas de la aplicación
@@ -50,6 +53,26 @@ class AppRouterConfig {
         path: '/register',
         name: 'register',
         builder: (context, state) => const RegisterScreen(),
+      ),
+
+      // Perfil
+      GoRoute(
+        path: '/profile/edit',
+        name: 'edit-profile',
+        builder: (context, state) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        path: '/profile/provider/:id',
+        name: 'provider-profile',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return ProviderPublicProfileScreen(providerId: id);
+        },
+      ),
+      GoRoute(
+        path: '/settings',
+        name: 'settings',
+        builder: (context, state) => const SettingsScreen(),
       ),
 
       // TODO: Agregar rutas de servicios

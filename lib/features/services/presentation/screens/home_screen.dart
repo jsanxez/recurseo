@@ -352,7 +352,9 @@ class _ProfileTab extends ConsumerWidget {
                       leading: const Icon(Icons.person_outline),
                       title: const Text('Editar perfil'),
                       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                      onTap: () {},
+                      onTap: () {
+                        context.push('/profile/edit');
+                      },
                     ),
                     const Divider(height: 1),
                     ListTile(
@@ -366,7 +368,9 @@ class _ProfileTab extends ConsumerWidget {
                       leading: const Icon(Icons.settings_outlined),
                       title: const Text('Configuración'),
                       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                      onTap: () {},
+                      onTap: () {
+                        context.push('/settings');
+                      },
                     ),
                   ],
                 ),
