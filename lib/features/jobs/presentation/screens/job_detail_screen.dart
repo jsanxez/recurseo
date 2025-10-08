@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:recurseo/features/auth/domain/entities/user_entity.dart';
+import 'package:recurseo/features/auth/presentation/providers/auth_notifier.dart';
 import 'package:recurseo/features/jobs/domain/entities/job_post_entity.dart';
 import 'package:recurseo/features/jobs/presentation/providers/job_detail_provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -17,11 +19,15 @@ class JobDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(jobDetailProvider(jobId));
+    final currentUser = ref.watch(currentUserProvider);
+    final isProvider = currentUser?.userType == UserType.provider;
     final theme = Theme.of(context);
 
     return Scaffold(
       body: _buildBody(context, state, theme),
-      floatingActionButton: state.job != null &&
+      // Solo los profesionales pueden enviar propuestas
+      floatingActionButton: isProvider &&
+              state.job != null &&
               state.job!.status == JobPostStatus.open
           ? FloatingActionButton.extended(
               onPressed: () {

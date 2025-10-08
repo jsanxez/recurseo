@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:recurseo/features/auth/domain/entities/user_entity.dart';
+import 'package:recurseo/features/auth/presentation/providers/auth_notifier.dart';
 import 'package:recurseo/features/jobs/domain/repositories/job_repository.dart';
 import 'package:recurseo/features/jobs/presentation/providers/job_feed_provider.dart';
 import 'package:recurseo/features/jobs/presentation/widgets/empty_state.dart';
@@ -14,10 +16,13 @@ class JobFeedScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(jobFeedProvider);
     final notifier = ref.read(jobFeedProvider.notifier);
+    final currentUser = ref.watch(currentUserProvider);
+    final isClient = currentUser?.userType == UserType.client;
+    final isProvider = currentUser?.userType == UserType.provider;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ofertas de Trabajo'),
+        title: Text(isProvider ? 'Buscar Trabajos' : 'Ofertas de Trabajo'),
         actions: [
           // Filtros
           IconButton(
@@ -59,17 +64,118 @@ class JobFeedScreen extends ConsumerWidget {
               ),
             ],
           ),
+          // Menú de usuario
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.account_circle),
+            tooltip: currentUser?.name ?? 'Usuario',
+            onSelected: (value) {
+              switch (value) {
+                case 'proposals':
+                  context.push('/proposals');
+                  break;
+                case 'my-jobs':
+                  context.push('/my-jobs');
+                  break;
+                case 'profile':
+                  context.push('/profile/edit');
+                  break;
+                case 'settings':
+                  context.push('/settings');
+                  break;
+                case 'logout':
+                  _showLogoutDialog(context, ref);
+                  break;
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'info',
+                enabled: false,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      currentUser?.name ?? 'Usuario',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      currentUser?.email ?? '',
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(),
+              // Profesionales: Mis Propuestas
+              if (isProvider)
+                const PopupMenuItem(
+                  value: 'proposals',
+                  child: Row(
+                    children: [
+                      Icon(Icons.description, size: 20),
+                      SizedBox(width: 12),
+                      Text('Mis Propuestas'),
+                    ],
+                  ),
+                ),
+              // Clientes: Mis Ofertas
+              if (isClient)
+                const PopupMenuItem(
+                  value: 'my-jobs',
+                  child: Row(
+                    children: [
+                      Icon(Icons.work, size: 20),
+                      SizedBox(width: 12),
+                      Text('Mis Ofertas'),
+                    ],
+                  ),
+                ),
+              const PopupMenuItem(
+                value: 'profile',
+                child: Row(
+                  children: [
+                    Icon(Icons.person, size: 20),
+                    SizedBox(width: 12),
+                    Text('Mi Perfil'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'settings',
+                child: Row(
+                  children: [
+                    Icon(Icons.settings, size: 20),
+                    SizedBox(width: 12),
+                    Text('Configuración'),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(),
+              const PopupMenuItem(
+                value: 'logout',
+                child: Row(
+                  children: [
+                    Icon(Icons.logout, size: 20, color: Colors.red),
+                    SizedBox(width: 12),
+                    Text('Cerrar Sesión', style: TextStyle(color: Colors.red)),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ],
       ),
       body: _buildBody(state, notifier),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // TODO: Navegar a crear oferta
-          context.push('/jobs/create');
-        },
-        icon: const Icon(Icons.add),
-        label: const Text('Publicar Trabajo'),
-      ),
+      // Solo los clientes pueden publicar trabajos
+      floatingActionButton: isClient
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                context.push('/jobs/create');
+              },
+              icon: const Icon(Icons.add),
+              label: const Text('Publicar Trabajo'),
+            )
+          : null,
     );
   }
 
@@ -185,6 +291,36 @@ class JobFeedScreen extends ConsumerWidget {
             ),
           );
         },
+      ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        icon: const Icon(Icons.logout, color: Colors.orange, size: 48),
+        title: const Text('Cerrar Sesión'),
+        content: const Text('¿Estás seguro de que deseas cerrar sesión?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await ref.read(authNotifierProvider.notifier).logout();
+              if (context.mounted) {
+                context.go('/welcome');
+              }
+            },
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.red,
+            ),
+            child: const Text('Cerrar Sesión'),
+          ),
+        ],
       ),
     );
   }
