@@ -11,6 +11,7 @@ import 'package:recurseo/features/profile/presentation/screens/edit_profile_scre
 import 'package:recurseo/features/profile/presentation/screens/provider_public_profile_screen.dart';
 import 'package:recurseo/features/profile/presentation/screens/settings_screen.dart';
 import 'package:recurseo/features/jobs/presentation/screens/home_screen.dart';
+import 'package:recurseo/features/jobs/presentation/screens/job_feed_screen.dart';
 
 /// Configuración de rutas de la aplicación
 class AppRouterConfig {
@@ -36,11 +37,11 @@ class AppRouterConfig {
         builder: (context, state) => const WelcomeScreen(),
       ),
 
-      // Home (pantalla principal con bottom nav)
+      // Home (pantalla principal - feed de trabajos)
       GoRoute(
         path: '/home',
         name: 'home',
-        builder: (context, state) => const HomeScreen(),
+        builder: (context, state) => const JobFeedScreen(),
       ),
 
       // Autenticación

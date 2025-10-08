@@ -4,10 +4,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:recurseo/core/config/router_config.dart';
 import 'package:recurseo/core/theme/app_theme.dart';
 import 'package:recurseo/features/auth/presentation/providers/auth_providers.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 void main() async {
   // Asegurar inicialización de Flutter
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Configurar timeago en español
+  timeago.setLocaleMessages('es', timeago.EsMessages());
 
   // Inicializar SharedPreferences antes de iniciar la app
   final sharedPreferences = await SharedPreferences.getInstance();
