@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:recurseo/features/jobs/domain/entities/job_post_entity.dart';
 
 /// Oficios/especialidades en construcción
 enum Trade {
@@ -28,6 +29,9 @@ enum AvailabilityStatus {
 /// Extiende UserEntity con información específica para profesionales
 /// que buscan trabajo en el sector construcción.
 class ProfessionalProfileEntity extends Equatable {
+  /// ID único del perfil
+  final String? id;
+
   /// ID del usuario
   final String userId;
 
@@ -48,6 +52,12 @@ class ProfessionalProfileEntity extends Equatable {
 
   /// Tiene herramientas propias
   final bool hasOwnTools;
+
+  /// Tiene transporte propio
+  final bool? hasOwnTransport;
+
+  /// Habilidades específicas
+  final List<String>? skills;
 
   /// Certificaciones o cursos (opcional)
   final List<String> certifications;
@@ -79,7 +89,32 @@ class ProfessionalProfileEntity extends Equatable {
   /// Total de reseñas recibidas
   final int reviewsCount;
 
+  /// Radio de servicio en kilómetros
+  final double? serviceRadius;
+
+  /// Tipo de pago preferido
+  final PaymentType? preferredPaymentType;
+
+  /// Dispuesto a viajar
+  final bool? willingToTravel;
+
+  /// Idiomas que habla
+  final List<String>? languages;
+
+  /// Proyectos completados (alias de completedJobs)
+  final int? completedProjects;
+
+  /// Total de reseñas (alias de reviewsCount)
+  final int? totalReviews;
+
+  /// Fecha de creación del perfil
+  final DateTime? createdAt;
+
+  /// Fecha de última actualización
+  final DateTime? updatedAt;
+
   const ProfessionalProfileEntity({
+    this.id,
     required this.userId,
     this.specialties = const [],
     this.trades = const [],
@@ -87,6 +122,8 @@ class ProfessionalProfileEntity extends Equatable {
     this.availability = AvailabilityStatus.disponible,
     this.preferredLocations = const [],
     this.hasOwnTools = false,
+    this.hasOwnTransport,
+    this.skills,
     this.certifications = const [],
     this.portfolioUrls = const [],
     this.hourlyRate,
@@ -97,6 +134,14 @@ class ProfessionalProfileEntity extends Equatable {
     this.averageRating,
     this.completedJobs = 0,
     this.reviewsCount = 0,
+    this.serviceRadius,
+    this.preferredPaymentType,
+    this.willingToTravel,
+    this.languages,
+    this.completedProjects,
+    this.totalReviews,
+    this.createdAt,
+    this.updatedAt,
   });
 
   /// Obtener texto legible del estado de disponibilidad
@@ -170,6 +215,7 @@ class ProfessionalProfileEntity extends Equatable {
   }
 
   ProfessionalProfileEntity copyWith({
+    String? id,
     String? userId,
     List<String>? specialties,
     List<Trade>? trades,
@@ -177,6 +223,8 @@ class ProfessionalProfileEntity extends Equatable {
     AvailabilityStatus? availability,
     List<String>? preferredLocations,
     bool? hasOwnTools,
+    bool? hasOwnTransport,
+    List<String>? skills,
     List<String>? certifications,
     List<String>? portfolioUrls,
     double? hourlyRate,
@@ -187,8 +235,17 @@ class ProfessionalProfileEntity extends Equatable {
     double? averageRating,
     int? completedJobs,
     int? reviewsCount,
+    double? serviceRadius,
+    PaymentType? preferredPaymentType,
+    bool? willingToTravel,
+    List<String>? languages,
+    int? completedProjects,
+    int? totalReviews,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return ProfessionalProfileEntity(
+      id: id ?? this.id,
       userId: userId ?? this.userId,
       specialties: specialties ?? this.specialties,
       trades: trades ?? this.trades,
@@ -196,6 +253,8 @@ class ProfessionalProfileEntity extends Equatable {
       availability: availability ?? this.availability,
       preferredLocations: preferredLocations ?? this.preferredLocations,
       hasOwnTools: hasOwnTools ?? this.hasOwnTools,
+      hasOwnTransport: hasOwnTransport ?? this.hasOwnTransport,
+      skills: skills ?? this.skills,
       certifications: certifications ?? this.certifications,
       portfolioUrls: portfolioUrls ?? this.portfolioUrls,
       hourlyRate: hourlyRate ?? this.hourlyRate,
@@ -206,11 +265,20 @@ class ProfessionalProfileEntity extends Equatable {
       averageRating: averageRating ?? this.averageRating,
       completedJobs: completedJobs ?? this.completedJobs,
       reviewsCount: reviewsCount ?? this.reviewsCount,
+      serviceRadius: serviceRadius ?? this.serviceRadius,
+      preferredPaymentType: preferredPaymentType ?? this.preferredPaymentType,
+      willingToTravel: willingToTravel ?? this.willingToTravel,
+      languages: languages ?? this.languages,
+      completedProjects: completedProjects ?? this.completedProjects,
+      totalReviews: totalReviews ?? this.totalReviews,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
   @override
   List<Object?> get props => [
+        id,
         userId,
         specialties,
         trades,
@@ -218,6 +286,8 @@ class ProfessionalProfileEntity extends Equatable {
         availability,
         preferredLocations,
         hasOwnTools,
+        hasOwnTransport,
+        skills,
         certifications,
         portfolioUrls,
         hourlyRate,
@@ -228,5 +298,13 @@ class ProfessionalProfileEntity extends Equatable {
         averageRating,
         completedJobs,
         reviewsCount,
+        serviceRadius,
+        preferredPaymentType,
+        willingToTravel,
+        languages,
+        completedProjects,
+        totalReviews,
+        createdAt,
+        updatedAt,
       ];
 }

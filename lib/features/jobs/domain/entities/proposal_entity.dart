@@ -47,6 +47,12 @@ class ProposalEntity extends Equatable {
   /// URLs de fotos del portfolio (trabajos previos similares)
   final List<String> portfolioUrls;
 
+  /// Años de experiencia del profesional (opcional, para mostrar en la propuesta)
+  final int? yearsExperience;
+
+  /// Duración estimada como string (ej: "3 días", "2 semanas")
+  final String? estimatedDuration;
+
   /// Estado de la propuesta
   final ProposalStatus status;
 
@@ -55,6 +61,15 @@ class ProposalEntity extends Equatable {
 
   /// Fecha de actualización
   final DateTime? updatedAt;
+
+  /// Fecha de aceptación (si fue aceptada)
+  final DateTime? acceptedAt;
+
+  /// Fecha de rechazo (si fue rechazada)
+  final DateTime? rejectedAt;
+
+  /// Fecha de retiro (si fue retirada)
+  final DateTime? withdrawnAt;
 
   /// Razón de rechazo (si fue rechazada)
   final String? rejectionReason;
@@ -71,9 +86,14 @@ class ProposalEntity extends Equatable {
     required this.availableFrom,
     this.estimatedDays,
     this.portfolioUrls = const [],
+    this.yearsExperience,
+    this.estimatedDuration,
     required this.status,
     required this.createdAt,
     this.updatedAt,
+    this.acceptedAt,
+    this.rejectedAt,
+    this.withdrawnAt,
     this.rejectionReason,
   });
 
@@ -141,9 +161,14 @@ class ProposalEntity extends Equatable {
     DateTime? availableFrom,
     int? estimatedDays,
     List<String>? portfolioUrls,
+    int? yearsExperience,
+    String? estimatedDuration,
     ProposalStatus? status,
     DateTime? createdAt,
     DateTime? updatedAt,
+    DateTime? acceptedAt,
+    DateTime? rejectedAt,
+    DateTime? withdrawnAt,
     String? rejectionReason,
   }) {
     return ProposalEntity(
@@ -158,9 +183,14 @@ class ProposalEntity extends Equatable {
       availableFrom: availableFrom ?? this.availableFrom,
       estimatedDays: estimatedDays ?? this.estimatedDays,
       portfolioUrls: portfolioUrls ?? this.portfolioUrls,
+      yearsExperience: yearsExperience ?? this.yearsExperience,
+      estimatedDuration: estimatedDuration ?? this.estimatedDuration,
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      acceptedAt: acceptedAt ?? this.acceptedAt,
+      rejectedAt: rejectedAt ?? this.rejectedAt,
+      withdrawnAt: withdrawnAt ?? this.withdrawnAt,
       rejectionReason: rejectionReason ?? this.rejectionReason,
     );
   }
@@ -178,9 +208,14 @@ class ProposalEntity extends Equatable {
         availableFrom,
         estimatedDays,
         portfolioUrls,
+        yearsExperience,
+        estimatedDuration,
         status,
         createdAt,
         updatedAt,
+        acceptedAt,
+        rejectedAt,
+        withdrawnAt,
         rejectionReason,
       ];
 }
