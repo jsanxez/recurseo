@@ -133,8 +133,7 @@ class JobFeedScreen extends ConsumerWidget {
           return JobCard(
             job: job,
             onTap: () {
-              // TODO: Navegar a detalle
-              // context.push('/jobs/${job.id}');
+              context.push('/jobs/${job.id}');
             },
           );
         },

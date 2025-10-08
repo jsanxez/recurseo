@@ -12,6 +12,7 @@ import 'package:recurseo/features/profile/presentation/screens/provider_public_p
 import 'package:recurseo/features/profile/presentation/screens/settings_screen.dart';
 import 'package:recurseo/features/jobs/presentation/screens/home_screen.dart';
 import 'package:recurseo/features/jobs/presentation/screens/job_feed_screen.dart';
+import 'package:recurseo/features/jobs/presentation/screens/job_detail_screen.dart';
 
 /// Configuración de rutas de la aplicación
 class AppRouterConfig {
@@ -74,6 +75,16 @@ class AppRouterConfig {
         path: '/settings',
         name: 'settings',
         builder: (context, state) => const SettingsScreen(),
+      ),
+
+      // Jobs (Ofertas de trabajo)
+      GoRoute(
+        path: '/jobs/:id',
+        name: 'job-detail',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return JobDetailScreen(jobId: id);
+        },
       ),
 
       // TODO: Agregar rutas de servicios
