@@ -14,6 +14,7 @@ import 'package:recurseo/features/jobs/presentation/screens/job_feed_screen.dart
 import 'package:recurseo/features/jobs/presentation/screens/job_detail_screen.dart';
 import 'package:recurseo/features/jobs/presentation/screens/send_proposal_screen.dart';
 import 'package:recurseo/features/jobs/presentation/screens/my_proposals_screen.dart';
+import 'package:recurseo/features/jobs/presentation/screens/proposal_detail_screen.dart';
 
 /// Configuración de rutas de la aplicación
 class AppRouterConfig {
@@ -102,6 +103,14 @@ class AppRouterConfig {
         path: '/proposals',
         name: 'my-proposals',
         builder: (context, state) => const MyProposalsScreen(),
+      ),
+      GoRoute(
+        path: '/proposals/:id',
+        name: 'proposal-detail',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return ProposalDetailScreen(proposalId: id);
+        },
       ),
 
       // TODO: Agregar rutas de servicios
