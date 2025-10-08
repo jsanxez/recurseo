@@ -189,8 +189,9 @@ class MyJobPostsScreen extends ConsumerWidget {
               // Ver propuestas
               TextButton.icon(
                 onPressed: () {
-                  // TODO: Navegar a JobProposalsScreen cuando esté creado
-                  context.push('/jobs/${job.id}/proposals');
+                  context.push(
+                    '/jobs/${job.id}/proposals?title=${Uri.encodeComponent(job.title)}',
+                  );
                 },
                 icon: const Icon(Icons.description, size: 18),
                 label: Text('${job.proposalsCount} Propuestas'),

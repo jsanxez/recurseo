@@ -8,10 +8,10 @@ class ProposalMockDataSource {
 
   // Propuestas de prueba
   static final _mockProposals = <ProposalModel>[
-    // Propuestas para "Electricista Urgente para Instalación Residencial" (job_1)
+    // Propuestas para "Electricista Urgente para Instalación Residencial" (job_1, clientId: 1)
     ProposalModel(
       id: 'prop_1',
-      jobPostId: 'job_1',
+      jobPostId: '1', // Electricista Urgente - cliente@test.com
       jobTitle: 'Electricista Urgente para Instalación Residencial',
       professionalId: '2', // María González (profesional@test.com)
       professionalName: 'María González',
@@ -24,95 +24,110 @@ class ProposalMockDataSource {
         'https://example.com/portfolio/electrical-2.jpg',
       ],
       yearsExperience: 8,
-      estimatedDuration: '3 días',
+      estimatedDuration: '8 días',
       status: ProposalStatus.pending,
       createdAt: DateTime.now().subtract(const Duration(hours: 2)),
       updatedAt: DateTime.now().subtract(const Duration(hours: 2)),
     ),
 
-    // Propuestas para "Se Necesitan 3 Albañiles para Obra en Tumbaco" (job_2)
     ProposalModel(
       id: 'prop_2',
-      jobPostId: 'job_2',
-      jobTitle: 'Se Necesitan 3 Albañiles para Obra en Tumbaco',
-      professionalId: '2',
-      professionalName: 'María González',
-      message: 'Somos un equipo de 3 albañiles con experiencia en construcción de viviendas. Tenemos referencias verificables de proyectos anteriores en Tumbaco.',
-      proposedRate: 40.0,
-      rateType: 'por_dia',
-      availableFrom: DateTime.now().add(const Duration(days: 2)),
+      jobPostId: '1', // Electricista Urgente - cliente@test.com
+      jobTitle: 'Electricista Urgente para Instalación Residencial',
+      professionalId: '4',
+      professionalName: 'Carlos Rodríguez',
+      message: 'Electricista certificado con 12 años de experiencia. He trabajado en más de 50 proyectos residenciales. Incluyo garantía de 2 años en mi trabajo.',
+      proposedRate: 45.0,
+      rateType: 'por_hora',
+      availableFrom: DateTime.now(),
       portfolioUrls: [
-        'https://example.com/portfolio/masonry-1.jpg',
+        'https://example.com/portfolio/electrical-3.jpg',
       ],
-      yearsExperience: 5,
-      estimatedDuration: '2 meses',
-      status: ProposalStatus.accepted,
-      acceptedAt: DateTime.now().subtract(const Duration(hours: 1)),
+      yearsExperience: 12,
+      estimatedDuration: '7 días',
+      status: ProposalStatus.pending,
       createdAt: DateTime.now().subtract(const Duration(hours: 5)),
-      updatedAt: DateTime.now().subtract(const Duration(hours: 1)),
+      updatedAt: DateTime.now().subtract(const Duration(hours: 5)),
     ),
 
-    // Propuesta para "Pintor con Experiencia para Casa de 200m2" (job_3)
     ProposalModel(
       id: 'prop_3',
-      jobPostId: 'job_3',
-      jobTitle: 'Pintor con Experiencia para Casa de 200m2',
-      professionalId: '2',
-      professionalName: 'María González',
-      message: 'Soy pintor profesional con 10 años de experiencia. Trabajo con pinturas de primera calidad y garantizo un acabado perfecto. Incluyo preparación de superficies.',
-      proposedRate: 2800.0,
-      rateType: 'por_proyecto',
-      availableFrom: DateTime.now().add(const Duration(days: 3)),
-      portfolioUrls: [
-        'https://example.com/portfolio/painting-1.jpg',
-        'https://example.com/portfolio/painting-2.jpg',
-        'https://example.com/portfolio/painting-3.jpg',
-      ],
-      yearsExperience: 10,
-      estimatedDuration: '10 días',
-      status: ProposalStatus.pending,
-      createdAt: DateTime.now().subtract(const Duration(hours: 8)),
-      updatedAt: DateTime.now().subtract(const Duration(hours: 8)),
-    ),
-
-    // Propuesta rechazada para ejemplo
-    ProposalModel(
-      id: 'prop_4',
-      jobPostId: 'job_1',
+      jobPostId: '1', // Electricista Urgente - cliente@test.com
       jobTitle: 'Electricista Urgente para Instalación Residencial',
-      professionalId: '4', // Otro profesional
-      professionalName: 'Juan Pérez',
-      message: 'Puedo hacer el trabajo.',
-      proposedRate: 80.0,
+      professionalId: '5',
+      professionalName: 'Pedro López',
+      message: 'Disponible de inmediato. Tengo experiencia en instalaciones completas y certificación vigente.',
+      proposedRate: 60.0,
       rateType: 'por_hora',
-      availableFrom: DateTime.now().add(const Duration(days: 7)),
+      availableFrom: DateTime.now(),
       portfolioUrls: [],
-      yearsExperience: 2,
+      yearsExperience: 5,
+      estimatedDuration: '10 días',
       status: ProposalStatus.rejected,
       rejectedAt: DateTime.now().subtract(const Duration(hours: 1)),
-      rejectionReason: 'Tarifa muy alta para el trabajo solicitado',
+      rejectionReason: 'Tarifa muy alta para el presupuesto disponible',
       createdAt: DateTime.now().subtract(const Duration(hours: 10)),
       updatedAt: DateTime.now().subtract(const Duration(hours: 1)),
     ),
 
-    // Propuesta retirada
+    // Propuestas para "Maestro de Obra para Proyecto Residencial" (job_3, clientId: 1)
+    ProposalModel(
+      id: 'prop_4',
+      jobPostId: '3', // Maestro de Obra - cliente@test.com
+      jobTitle: 'Maestro de Obra para Proyecto Residencial',
+      professionalId: '2',
+      professionalName: 'María González',
+      message: 'Maestro de obra con 15 años de experiencia supervisando proyectos residenciales. Manejo de cuadrillas, lectura de planos, y control de calidad. Referencias verificables.',
+      proposedRate: 70.0,
+      rateType: 'por_dia',
+      availableFrom: DateTime.now().add(const Duration(days: 3)),
+      portfolioUrls: [
+        'https://example.com/portfolio/construction-1.jpg',
+        'https://example.com/portfolio/construction-2.jpg',
+      ],
+      yearsExperience: 15,
+      estimatedDuration: '6 meses',
+      status: ProposalStatus.accepted,
+      acceptedAt: DateTime.now().subtract(const Duration(hours: 2)),
+      createdAt: DateTime.now().subtract(const Duration(hours: 24)),
+      updatedAt: DateTime.now().subtract(const Duration(hours: 2)),
+    ),
+
     ProposalModel(
       id: 'prop_5',
-      jobPostId: 'job_3',
-      jobTitle: 'Pintor con Experiencia para Casa de 200m2',
-      professionalId: '5',
-      professionalName: 'Pedro López',
-      message: 'Disponible para el proyecto de pintura.',
-      proposedRate: 2500.0,
-      rateType: 'por_proyecto',
-      availableFrom: DateTime.now().add(const Duration(days: 1)),
+      jobPostId: '3', // Maestro de Obra - cliente@test.com
+      jobTitle: 'Maestro de Obra para Proyecto Residencial',
+      professionalId: '4',
+      professionalName: 'Carlos Rodríguez',
+      message: 'Tengo amplia experiencia como maestro de obra. Puedo coordinar todo el equipo de trabajo y garantizar cumplimiento de plazos.',
+      proposedRate: 65.0,
+      rateType: 'por_dia',
+      availableFrom: DateTime.now().add(const Duration(days: 7)),
       portfolioUrls: [],
-      yearsExperience: 3,
-      estimatedDuration: '12 días',
-      status: ProposalStatus.withdrawn,
-      withdrawnAt: DateTime.now().subtract(const Duration(hours: 3)),
+      yearsExperience: 8,
+      estimatedDuration: '6 meses',
+      status: ProposalStatus.pending,
       createdAt: DateTime.now().subtract(const Duration(hours: 12)),
-      updatedAt: DateTime.now().subtract(const Duration(hours: 3)),
+      updatedAt: DateTime.now().subtract(const Duration(hours: 12)),
+    ),
+
+    // Propuesta para "Se Necesitan 3 Albañiles" (job_2, clientId: 3 - no del cliente actual)
+    ProposalModel(
+      id: 'prop_6',
+      jobPostId: '2', // Albañiles - otro cliente
+      jobTitle: 'Se Necesitan 3 Albañiles para Obra en Tumbaco',
+      professionalId: '2',
+      professionalName: 'María González',
+      message: 'Somos un equipo de 3 albañiles con experiencia en construcción de viviendas.',
+      proposedRate: 40.0,
+      rateType: 'por_dia',
+      availableFrom: DateTime.now().add(const Duration(days: 2)),
+      portfolioUrls: [],
+      yearsExperience: 5,
+      estimatedDuration: '2 meses',
+      status: ProposalStatus.pending,
+      createdAt: DateTime.now().subtract(const Duration(hours: 6)),
+      updatedAt: DateTime.now().subtract(const Duration(hours: 6)),
     ),
   ];
 
