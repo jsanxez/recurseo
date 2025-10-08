@@ -7,12 +7,16 @@ class ProposalCard extends StatelessWidget {
   final ProposalEntity proposal;
   final VoidCallback? onTap;
   final bool showJobInfo;
+  final bool showJobTitle;
+  final VoidCallback? onWithdraw;
 
   const ProposalCard({
     super.key,
     required this.proposal,
     this.onTap,
     this.showJobInfo = false,
+    this.showJobTitle = false,
+    this.onWithdraw,
   });
 
   @override
@@ -29,15 +33,41 @@ class ProposalCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Título del trabajo (si se muestra en vista del profesional)
+              if (showJobTitle) ...[
+                Row(
+                  children: [
+                    Icon(
+                      Icons.work_outline,
+                      size: 16,
+                      color: theme.colorScheme.primary,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        proposal.jobTitle ?? 'Sin título',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.primary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+              ],
+
               // Header: Nombre profesional y estado
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
                     child: Text(
-                      proposal.professionalName,
+                      showJobTitle ? 'Tu propuesta' : proposal.professionalName,
                       style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                        fontWeight: showJobTitle ? FontWeight.normal : FontWeight.bold,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -146,6 +176,23 @@ class ProposalCard extends StatelessWidget {
                         ),
                       ),
                     ],
+                  ),
+                ),
+              ],
+
+              // Botón de retirar propuesta
+              if (onWithdraw != null) ...[
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: onWithdraw,
+                    icon: const Icon(Icons.remove_circle_outline, size: 18),
+                    label: const Text('Retirar Propuesta'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.orange,
+                      side: const BorderSide(color: Colors.orange),
+                    ),
                   ),
                 ),
               ],

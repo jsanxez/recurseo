@@ -5,6 +5,7 @@ class ProposalModel extends ProposalEntity {
   const ProposalModel({
     required super.id,
     required super.jobPostId,
+    super.jobTitle,
     required super.professionalId,
     required super.professionalName,
     super.professionalPhotoUrl,
@@ -30,6 +31,7 @@ class ProposalModel extends ProposalEntity {
     return ProposalModel(
       id: json['id'] as String,
       jobPostId: json['job_post_id'] as String,
+      jobTitle: json['job_title'] as String?,
       professionalId: json['professional_id'] as String,
       professionalName: json['professional_name'] as String,
       professionalPhotoUrl: json['professional_photo_url'] as String?,
@@ -71,6 +73,7 @@ class ProposalModel extends ProposalEntity {
     return {
       'id': id,
       'job_post_id': jobPostId,
+      'job_title': jobTitle,
       'professional_id': professionalId,
       'professional_name': professionalName,
       'professional_photo_url': professionalPhotoUrl,
@@ -97,6 +100,7 @@ class ProposalModel extends ProposalEntity {
     return ProposalModel(
       id: entity.id,
       jobPostId: entity.jobPostId,
+      jobTitle: entity.jobTitle,
       professionalId: entity.professionalId,
       professionalName: entity.professionalName,
       professionalPhotoUrl: entity.professionalPhotoUrl,
@@ -123,6 +127,7 @@ class ProposalModel extends ProposalEntity {
   ProposalModel copyWith({
     String? id,
     String? jobPostId,
+    String? jobTitle,
     String? professionalId,
     String? professionalName,
     String? professionalPhotoUrl,
@@ -145,6 +150,7 @@ class ProposalModel extends ProposalEntity {
     return ProposalModel(
       id: id ?? this.id,
       jobPostId: jobPostId ?? this.jobPostId,
+      jobTitle: jobTitle ?? this.jobTitle,
       professionalId: professionalId ?? this.professionalId,
       professionalName: professionalName ?? this.professionalName,
       professionalPhotoUrl: professionalPhotoUrl ?? this.professionalPhotoUrl,

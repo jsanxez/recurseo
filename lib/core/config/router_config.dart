@@ -10,9 +10,10 @@ import 'package:recurseo/features/auth/presentation/screens/welcome_screen.dart'
 import 'package:recurseo/features/profile/presentation/screens/edit_profile_screen.dart';
 import 'package:recurseo/features/profile/presentation/screens/provider_public_profile_screen.dart';
 import 'package:recurseo/features/profile/presentation/screens/settings_screen.dart';
-import 'package:recurseo/features/jobs/presentation/screens/home_screen.dart';
 import 'package:recurseo/features/jobs/presentation/screens/job_feed_screen.dart';
 import 'package:recurseo/features/jobs/presentation/screens/job_detail_screen.dart';
+import 'package:recurseo/features/jobs/presentation/screens/send_proposal_screen.dart';
+import 'package:recurseo/features/jobs/presentation/screens/my_proposals_screen.dart';
 
 /// Configuración de rutas de la aplicación
 class AppRouterConfig {
@@ -85,6 +86,22 @@ class AppRouterConfig {
           final id = state.pathParameters['id']!;
           return JobDetailScreen(jobId: id);
         },
+      ),
+      GoRoute(
+        path: '/jobs/:id/proposal',
+        name: 'send-proposal',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          final title = state.uri.queryParameters['title'] ?? 'Oferta';
+          return SendProposalScreen(jobId: id, jobTitle: title);
+        },
+      ),
+
+      // Propuestas
+      GoRoute(
+        path: '/proposals',
+        name: 'my-proposals',
+        builder: (context, state) => const MyProposalsScreen(),
       ),
 
       // TODO: Agregar rutas de servicios

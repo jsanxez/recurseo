@@ -12,6 +12,7 @@ class ProposalMockDataSource {
     ProposalModel(
       id: 'prop_1',
       jobPostId: 'job_1',
+      jobTitle: 'Electricista Urgente para Instalación Residencial',
       professionalId: '2', // María González (profesional@test.com)
       professionalName: 'María González',
       message: 'Tengo 8 años de experiencia en instalaciones eléctricas residenciales. Cuento con licencia profesional vigente y herramientas completas. Puedo empezar mañana mismo.',
@@ -33,6 +34,7 @@ class ProposalMockDataSource {
     ProposalModel(
       id: 'prop_2',
       jobPostId: 'job_2',
+      jobTitle: 'Se Necesitan 3 Albañiles para Obra en Tumbaco',
       professionalId: '2',
       professionalName: 'María González',
       message: 'Somos un equipo de 3 albañiles con experiencia en construcción de viviendas. Tenemos referencias verificables de proyectos anteriores en Tumbaco.',
@@ -54,6 +56,7 @@ class ProposalMockDataSource {
     ProposalModel(
       id: 'prop_3',
       jobPostId: 'job_3',
+      jobTitle: 'Pintor con Experiencia para Casa de 200m2',
       professionalId: '2',
       professionalName: 'María González',
       message: 'Soy pintor profesional con 10 años de experiencia. Trabajo con pinturas de primera calidad y garantizo un acabado perfecto. Incluyo preparación de superficies.',
@@ -76,6 +79,7 @@ class ProposalMockDataSource {
     ProposalModel(
       id: 'prop_4',
       jobPostId: 'job_1',
+      jobTitle: 'Electricista Urgente para Instalación Residencial',
       professionalId: '4', // Otro profesional
       professionalName: 'Juan Pérez',
       message: 'Puedo hacer el trabajo.',
@@ -95,6 +99,7 @@ class ProposalMockDataSource {
     ProposalModel(
       id: 'prop_5',
       jobPostId: 'job_3',
+      jobTitle: 'Pintor con Experiencia para Casa de 200m2',
       professionalId: '5',
       professionalName: 'Pedro López',
       message: 'Disponible para el proyecto de pintura.',

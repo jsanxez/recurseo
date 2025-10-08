@@ -21,6 +21,18 @@ class JobDetailScreen extends ConsumerWidget {
 
     return Scaffold(
       body: _buildBody(context, state, theme),
+      floatingActionButton: state.job != null &&
+              state.job!.status == JobPostStatus.open
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                context.push(
+                  '/jobs/${state.job!.id}/proposal?title=${Uri.encodeComponent(state.job!.title)}',
+                );
+              },
+              icon: const Icon(Icons.send),
+              label: const Text('Enviar Propuesta'),
+            )
+          : null,
     );
   }
 

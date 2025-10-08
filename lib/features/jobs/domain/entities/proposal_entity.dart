@@ -19,6 +19,9 @@ class ProposalEntity extends Equatable {
   /// ID de la oferta de trabajo a la que responde
   final String jobPostId;
 
+  /// Título del trabajo (para referencia rápida)
+  final String? jobTitle;
+
   /// ID del profesional que envía la propuesta
   final String professionalId;
 
@@ -77,6 +80,7 @@ class ProposalEntity extends Equatable {
   const ProposalEntity({
     required this.id,
     required this.jobPostId,
+    this.jobTitle,
     required this.professionalId,
     required this.professionalName,
     this.professionalPhotoUrl,
@@ -152,6 +156,7 @@ class ProposalEntity extends Equatable {
   ProposalEntity copyWith({
     String? id,
     String? jobPostId,
+    String? jobTitle,
     String? professionalId,
     String? professionalName,
     String? professionalPhotoUrl,
@@ -174,6 +179,7 @@ class ProposalEntity extends Equatable {
     return ProposalEntity(
       id: id ?? this.id,
       jobPostId: jobPostId ?? this.jobPostId,
+      jobTitle: jobTitle ?? this.jobTitle,
       professionalId: professionalId ?? this.professionalId,
       professionalName: professionalName ?? this.professionalName,
       professionalPhotoUrl: professionalPhotoUrl ?? this.professionalPhotoUrl,
@@ -199,6 +205,7 @@ class ProposalEntity extends Equatable {
   List<Object?> get props => [
         id,
         jobPostId,
+        jobTitle,
         professionalId,
         professionalName,
         professionalPhotoUrl,
