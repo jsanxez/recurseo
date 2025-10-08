@@ -10,7 +10,7 @@ import 'package:recurseo/features/auth/presentation/screens/welcome_screen.dart'
 import 'package:recurseo/features/profile/presentation/screens/edit_profile_screen.dart';
 import 'package:recurseo/features/profile/presentation/screens/provider_public_profile_screen.dart';
 import 'package:recurseo/features/profile/presentation/screens/settings_screen.dart';
-import 'package:recurseo/features/services/presentation/screens/home_screen.dart';
+import 'package:recurseo/features/jobs/presentation/screens/home_screen.dart';
 
 /// Configuración de rutas de la aplicación
 class AppRouterConfig {
