@@ -19,6 +19,7 @@ import 'package:recurseo/features/jobs/presentation/screens/my_job_posts_screen.
 import 'package:recurseo/features/jobs/presentation/screens/job_proposals_screen.dart';
 import 'package:recurseo/features/jobs/presentation/screens/create_job_post_screen.dart';
 import 'package:recurseo/features/jobs/presentation/screens/professional_profile_screen.dart';
+import 'package:recurseo/features/jobs/presentation/screens/create_professional_profile_screen.dart';
 
 /// Configuración de rutas de la aplicación
 class AppRouterConfig {
@@ -84,6 +85,19 @@ class AppRouterConfig {
           final id = state.pathParameters['id']!;
           final isOwn = state.uri.queryParameters['own'] == 'true';
           return ProfessionalProfileScreen(userId: id, isOwnProfile: isOwn);
+        },
+      ),
+      GoRoute(
+        path: '/profile/professional/create',
+        name: 'create-professional-profile',
+        builder: (context, state) => const CreateProfessionalProfileScreen(),
+      ),
+      GoRoute(
+        path: '/profile/professional/edit',
+        name: 'edit-professional-profile',
+        builder: (context, state) {
+          // TODO: Pasar el perfil existente como parámetro extra
+          return const CreateProfessionalProfileScreen();
         },
       ),
       GoRoute(

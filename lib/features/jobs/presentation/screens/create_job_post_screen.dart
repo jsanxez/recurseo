@@ -46,7 +46,6 @@ class _CreateJobPostScreenState extends ConsumerState<CreateJobPostScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final state = ref.watch(createJobPostProvider);
-    final notifier = ref.read(createJobPostProvider.notifier);
 
     // Escuchar cambios de estado para mostrar mensajes
     ref.listen<CreateJobPostState>(createJobPostProvider, (previous, next) {
@@ -421,7 +420,7 @@ class _CreateJobPostScreenState extends ConsumerState<CreateJobPostScreen> {
           .toList();
     }
 
-    final success = await notifier.createJobPost(
+    await notifier.createJobPost(
       categoryIds: _selectedCategoryIds,
       title: _titleController.text,
       description: _descriptionController.text,

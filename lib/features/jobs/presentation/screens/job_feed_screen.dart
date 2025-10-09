@@ -73,6 +73,10 @@ class JobFeedScreen extends ConsumerWidget {
                 case 'proposals':
                   context.push('/proposals');
                   break;
+                case 'professional-profile':
+                  // Navegar al perfil profesional del usuario actual
+                  context.push('/profile/professional/${currentUser?.id}?own=true');
+                  break;
                 case 'my-jobs':
                   context.push('/my-jobs');
                   break;
@@ -115,6 +119,18 @@ class JobFeedScreen extends ConsumerWidget {
                       Icon(Icons.description, size: 20),
                       SizedBox(width: 12),
                       Text('Mis Propuestas'),
+                    ],
+                  ),
+                ),
+              // Profesionales: Mi Perfil Profesional
+              if (isProvider)
+                const PopupMenuItem(
+                  value: 'professional-profile',
+                  child: Row(
+                    children: [
+                      Icon(Icons.work_outline, size: 20),
+                      SizedBox(width: 12),
+                      Text('Mi Perfil Profesional'),
                     ],
                   ),
                 ),
