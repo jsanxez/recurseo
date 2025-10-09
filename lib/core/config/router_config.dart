@@ -17,6 +17,7 @@ import 'package:recurseo/features/jobs/presentation/screens/my_proposals_screen.
 import 'package:recurseo/features/jobs/presentation/screens/proposal_detail_screen.dart';
 import 'package:recurseo/features/jobs/presentation/screens/my_job_posts_screen.dart';
 import 'package:recurseo/features/jobs/presentation/screens/job_proposals_screen.dart';
+import 'package:recurseo/features/jobs/presentation/screens/create_job_post_screen.dart';
 
 /// Configuración de rutas de la aplicación
 class AppRouterConfig {
@@ -82,6 +83,11 @@ class AppRouterConfig {
       ),
 
       // Jobs (Ofertas de trabajo)
+      GoRoute(
+        path: '/jobs/create',
+        name: 'create-job',
+        builder: (context, state) => const CreateJobPostScreen(),
+      ),
       GoRoute(
         path: '/jobs/:id',
         name: 'job-detail',
