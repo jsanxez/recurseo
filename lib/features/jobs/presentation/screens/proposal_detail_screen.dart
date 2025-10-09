@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:recurseo/features/jobs/domain/entities/proposal_entity.dart';
 import 'package:recurseo/features/jobs/presentation/providers/proposal_detail_provider.dart';
+import 'package:recurseo/features/jobs/presentation/widgets/contact_card.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 /// Pantalla de detalle de una propuesta
@@ -147,6 +148,18 @@ class ProposalDetailScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 24),
+
+            // Información de contacto (solo si la propuesta fue aceptada)
+            if (proposal.status == ProposalStatus.accepted) ...[
+              ContactCard(
+                professionalName: proposal.professionalName,
+                phone: proposal.professionalPhone,
+                email: proposal.professionalEmail,
+                preFilledMessage:
+                    'Hola ${proposal.professionalName}, acepté tu propuesta para "${proposal.jobTitle ?? 'el trabajo'}". Me gustaría coordinar los detalles.',
+              ),
+              const SizedBox(height: 24),
+            ],
 
             // Mensaje de la propuesta
             _buildSectionTitle('Propuesta', theme),

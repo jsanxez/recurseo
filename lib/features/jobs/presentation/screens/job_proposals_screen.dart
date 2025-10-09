@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:recurseo/features/jobs/domain/entities/proposal_entity.dart';
 import 'package:recurseo/features/jobs/presentation/providers/job_proposals_provider.dart';
+import 'package:recurseo/features/jobs/presentation/widgets/contact_card.dart';
 import 'package:recurseo/features/jobs/presentation/widgets/empty_state.dart';
 import 'package:recurseo/features/jobs/presentation/widgets/proposal_card.dart';
 
@@ -370,6 +371,8 @@ class JobProposalsScreen extends ConsumerWidget {
                     backgroundColor: Colors.green,
                   ),
                 );
+                // Mostrar información de contacto
+                _showContactDialog(context, proposal);
               }
             },
             style: FilledButton.styleFrom(
@@ -441,6 +444,50 @@ class JobProposalsScreen extends ConsumerWidget {
               backgroundColor: Colors.red,
             ),
             child: const Text('Rechazar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showContactDialog(
+    BuildContext context,
+    ProposalEntity proposal,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        icon: const Icon(Icons.check_circle, color: Colors.green, size: 48),
+        title: const Text('¡Propuesta Aceptada!'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Ahora puedes contactar al profesional para coordinar los detalles del trabajo:',
+            ),
+            const SizedBox(height: 16),
+            ContactCard(
+              professionalName: proposal.professionalName,
+              phone: proposal.professionalPhone,
+              email: proposal.professionalEmail,
+              preFilledMessage:
+                  'Hola ${proposal.professionalName}, acepté tu propuesta para "${proposal.jobTitle ?? 'el trabajo'}". Me gustaría coordinar los detalles.',
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cerrar'),
+          ),
+          FilledButton.icon(
+            onPressed: () {
+              Navigator.pop(context);
+              context.push('/proposals/${proposal.id}');
+            },
+            icon: const Icon(Icons.visibility),
+            label: const Text('Ver Propuesta'),
           ),
         ],
       ),

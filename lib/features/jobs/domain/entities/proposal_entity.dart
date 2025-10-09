@@ -31,6 +31,12 @@ class ProposalEntity extends Equatable {
   /// URL de foto del profesional
   final String? professionalPhotoUrl;
 
+  /// Teléfono del profesional (para contacto directo)
+  final String? professionalPhone;
+
+  /// Email del profesional (para contacto directo)
+  final String? professionalEmail;
+
   /// Mensaje de presentación del profesional
   final String message;
 
@@ -84,6 +90,8 @@ class ProposalEntity extends Equatable {
     required this.professionalId,
     required this.professionalName,
     this.professionalPhotoUrl,
+    this.professionalPhone,
+    this.professionalEmail,
     required this.message,
     required this.proposedRate,
     required this.rateType,
@@ -160,6 +168,8 @@ class ProposalEntity extends Equatable {
     String? professionalId,
     String? professionalName,
     String? professionalPhotoUrl,
+    String? professionalPhone,
+    String? professionalEmail,
     String? message,
     double? proposedRate,
     String? rateType,
@@ -183,6 +193,8 @@ class ProposalEntity extends Equatable {
       professionalId: professionalId ?? this.professionalId,
       professionalName: professionalName ?? this.professionalName,
       professionalPhotoUrl: professionalPhotoUrl ?? this.professionalPhotoUrl,
+      professionalPhone: professionalPhone ?? this.professionalPhone,
+      professionalEmail: professionalEmail ?? this.professionalEmail,
       message: message ?? this.message,
       proposedRate: proposedRate ?? this.proposedRate,
       rateType: rateType ?? this.rateType,
@@ -209,6 +221,8 @@ class ProposalEntity extends Equatable {
         professionalId,
         professionalName,
         professionalPhotoUrl,
+        professionalPhone,
+        professionalEmail,
         message,
         proposedRate,
         rateType,
