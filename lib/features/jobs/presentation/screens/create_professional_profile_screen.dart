@@ -324,7 +324,7 @@ class _CreateProfessionalProfileScreenState
               const SizedBox(height: 16),
               SwitchListTile(
                 title: const Text('Buscando trabajo activamente'),
-                subtitle: const Text('Aparecerás en búsquedas de clientes'),
+                subtitle: const Text('Aparecerás en búsquedas de empleadores'),
                 value: _lookingForWork,
                 onChanged: (value) {
                   setState(() {

@@ -380,7 +380,7 @@ class _SendProposalScreenState extends ConsumerState<SendProposalScreen> {
         ),
         title: const Text('¡Propuesta Enviada!'),
         content: const Text(
-          'Tu propuesta ha sido enviada exitosamente. El cliente la revisará y te contactará si está interesado.',
+          'Tu propuesta ha sido enviada exitosamente. El empleador la revisará y te contactará si está interesado.',
         ),
         actions: [
           TextButton(

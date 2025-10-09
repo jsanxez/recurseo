@@ -293,7 +293,7 @@ class SettingsScreen extends ConsumerWidget {
             SizedBox(height: AppSizes.paddingMd),
             Text('Versión: 0.1.0'),
             SizedBox(height: AppSizes.paddingSm),
-            Text('Conectamos profesionales con clientes'),
+            Text('Conectamos profesionales con empleadores'),
           ],
         ),
         actions: [

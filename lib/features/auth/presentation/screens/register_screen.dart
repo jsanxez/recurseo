@@ -126,8 +126,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   children: [
                     Expanded(
                       child: _UserTypeCard(
-                        title: 'Cliente',
-                        description: 'Busco servicios',
+                        title: 'Empleador',
+                        description: 'Necesito contratar',
                         icon: Icons.person_outline,
                         isSelected: _selectedUserType == UserType.client,
                         onTap: isLoading
@@ -142,7 +142,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     const SizedBox(width: AppSizes.paddingMd),
                     Expanded(
                       child: _UserTypeCard(
-                        title: 'Proveedor',
+                        title: 'Profesional',
                         description: 'Ofrezco servicios',
                         icon: Icons.work_outline,
                         isSelected: _selectedUserType == UserType.provider,

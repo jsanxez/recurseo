@@ -28,8 +28,8 @@ class ProfessionalProfileScreen extends ConsumerWidget {
             IconButton(
               icon: const Icon(Icons.edit),
               onPressed: () {
-                // TODO: Navegar a pantalla de edición
-                context.push('/profile/professional/edit');
+                // Navegar a pantalla de edición pasando el perfil existente
+                context.push('/profile/professional/edit', extra: state.profile);
               },
               tooltip: 'Editar perfil',
             ),

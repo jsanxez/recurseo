@@ -147,7 +147,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   ),
                   title: const Text('Tipo de cuenta'),
                   subtitle: Text(
-                    user?.userType.name == 'provider' ? 'Proveedor' : 'Cliente',
+                    user?.userType.name == 'provider' ? 'Profesional' : 'Empleador',
                   ),
                   trailing: const Icon(Icons.lock_outline, size: 16),
                 ),

@@ -20,6 +20,7 @@ import 'package:recurseo/features/jobs/presentation/screens/job_proposals_screen
 import 'package:recurseo/features/jobs/presentation/screens/create_job_post_screen.dart';
 import 'package:recurseo/features/jobs/presentation/screens/professional_profile_screen.dart';
 import 'package:recurseo/features/jobs/presentation/screens/create_professional_profile_screen.dart';
+import 'package:recurseo/features/jobs/domain/entities/professional_profile_entity.dart';
 
 /// Configuración de rutas de la aplicación
 class AppRouterConfig {
@@ -96,8 +97,10 @@ class AppRouterConfig {
         path: '/profile/professional/edit',
         name: 'edit-professional-profile',
         builder: (context, state) {
-          // TODO: Pasar el perfil existente como parámetro extra
-          return const CreateProfessionalProfileScreen();
+          final existingProfile = state.extra as ProfessionalProfileEntity?;
+          return CreateProfessionalProfileScreen(
+            existingProfile: existingProfile,
+          );
         },
       ),
       GoRoute(
