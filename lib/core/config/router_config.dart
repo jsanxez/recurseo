@@ -18,6 +18,7 @@ import 'package:recurseo/features/jobs/presentation/screens/proposal_detail_scre
 import 'package:recurseo/features/jobs/presentation/screens/my_job_posts_screen.dart';
 import 'package:recurseo/features/jobs/presentation/screens/job_proposals_screen.dart';
 import 'package:recurseo/features/jobs/presentation/screens/create_job_post_screen.dart';
+import 'package:recurseo/features/jobs/presentation/screens/professional_profile_screen.dart';
 
 /// Configuración de rutas de la aplicación
 class AppRouterConfig {
@@ -74,6 +75,15 @@ class AppRouterConfig {
         builder: (context, state) {
           final id = state.pathParameters['id']!;
           return ProviderPublicProfileScreen(providerId: id);
+        },
+      ),
+      GoRoute(
+        path: '/profile/professional/:id',
+        name: 'professional-profile',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          final isOwn = state.uri.queryParameters['own'] == 'true';
+          return ProfessionalProfileScreen(userId: id, isOwnProfile: isOwn);
         },
       ),
       GoRoute(
